@@ -12,14 +12,15 @@ public class RouteController {
 
     @RequestMapping(method= RequestMethod.GET, value="/{from}/{to}")
     @CrossOrigin("http://localhost:3000")
-    public String getRouteCoordinates(@PathVariable String from, @PathVariable String to){
+    @ResponseBody
+    public ResponseEntity<String> getRouteCoordinates(@PathVariable String from, @PathVariable String to){
 
-        System.out.println(from);
-        System.out.println(to);
         String body = "{\"values\": [ [42.704202, -71.502017], [42.7036844, -71.5020453] ," +
                 "[42.7035846, -71.5020392]]}";
+        ResponseEntity<String> responseEntity = new ResponseEntity<String>(body, HttpStatus.BAD_REQUEST);
 
-        return body;
+
+        return responseEntity;
     }
 
 }
