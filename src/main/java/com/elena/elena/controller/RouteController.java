@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Created by chungyang on 3/25/20.
- */
+
 @RestController
 public class RouteController {
 
@@ -42,7 +40,7 @@ public class RouteController {
         Node originNode = new Node();
         Node destinatioNode = new Node();
         String responseBody = coordinateParser.coordinates2string(router.getRoute(originNode, destinatioNode));
-        ResponseEntity<String> responseEntity = new ResponseEntity<String>(responseBody, HttpStatus.OK);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(responseBody, HttpStatus.OK);
 
 
         return responseEntity;
