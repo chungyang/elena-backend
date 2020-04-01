@@ -1,7 +1,7 @@
 package com.elena.elena.controller;
 
-import com.elena.elena.model.AbstractNode;
-import com.elena.elena.model.Node;
+import com.elena.elena.model.ElenaGraph;
+import com.elena.elena.model.Graph;
 import com.elena.elena.routing.AbstractRouterFactory;
 import com.elena.elena.routing.Algorithm;
 import com.elena.elena.routing.ElevationMode;
@@ -38,9 +38,8 @@ public class RouteController {
         Algorithm algorithm = Algorithm.getMatchingAlogrithm(algorithmName);
         ElevationMode eleMode = ElevationMode.getElevationMode(elevationMode);
         Router router = routerFactory.getRouter(algorithm, eleMode, percentage);
-        AbstractNode originNode = new Node();
-        AbstractNode destinatioNode = new Node();
-        String responseBody = coordinateParser.coordinates2string(router.getRoute(originNode, destinatioNode));
+        ElenaGraph graph = new Graph();
+        String responseBody = coordinateParser.coordinates2string(router.getRoute(from, to, graph));
         ResponseEntity<String> responseEntity = new ResponseEntity<>(responseBody, HttpStatus.OK);
 
 
