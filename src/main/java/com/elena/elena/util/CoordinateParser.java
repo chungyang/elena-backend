@@ -1,14 +1,14 @@
 package com.elena.elena.util;
 
-import com.elena.elena.model.Coordinate;
+import com.elena.elena.model.AbstractElenaPath;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.nio.file.Path;
 
 @Component
 public class CoordinateParser implements Parser{
     @Override
-    public String coordinates2string(List<Coordinate> coordinates) {
+    public String path2String(AbstractElenaPath path) {
         return null;
     }
 }

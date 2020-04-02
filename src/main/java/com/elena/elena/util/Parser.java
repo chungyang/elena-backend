@@ -1,11 +1,9 @@
 package com.elena.elena.util;
 
 
-import com.elena.elena.model.Coordinate;
-
-import java.util.List;
+import com.elena.elena.model.AbstractElenaPath;
 
 public interface Parser {
 
-    String coordinates2string(List<Coordinate> coordinates);
+    String path2String(AbstractElenaPath path);
 }
