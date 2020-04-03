@@ -7,9 +7,9 @@ import lombok.Setter;
 
 import java.util.List;
 
-public abstract class AbstractElenaNode {
+public abstract class AbstractElenaNode<T> {
 
-    @Getter @NonNull protected String id;
+    @Getter @NonNull protected T id;
 
     @Setter @Getter protected float distanceWeight;
 

@@ -4,17 +4,12 @@ import lombok.Getter;
 
 import java.util.Map;
 
-public abstract class AbstractElenaGraph {
+public abstract class AbstractElenaGraph<T1, T2, E> {
 
-    @Getter protected AbstractElenaNode currentNode;
-    @Getter protected Map<String, AbstractElenaNode> nodes;
-    @Getter protected Map<String, AbstractElenaEdge> edges;
+    public abstract AbstractElenaNode<T1> getCurrentNode();
 
-    public AbstractElenaNode getNode(String id){
-        return this.nodes.get(id);
-    }
+    public abstract AbstractElenaNode<T1> getNode(T1 id);
 
-    public AbstractElenaEdge getEdge(String id){
-        return this.edges.get(id);
-    }
+    public abstract AbstractElenaEdge<T2, E> getEdge(T2 id);
+
 }

@@ -12,27 +12,25 @@ import java.util.Map;
 /**
  * This AbstractEdge class represents a uni-directional edge
  */
-public abstract class AbstractElenaEdge<E> {
+public abstract class AbstractElenaEdge<T, E> {
 
-    @Getter @NonNull protected String id;
 
-    @Getter @Setter protected float edgeDistance;
+    public abstract T getId();
 
-    @Getter @Setter protected float edgeElevation;
+    public abstract float getEdgeDistance();
 
-    @Getter protected AbstractElenaNode originNode;
+    public abstract float getEdgeElevation();
 
-    @Getter protected AbstractElenaNode destinationNode;
+    public abstract AbstractElenaNode getOriginNode();
 
-    /**
-     * An edge may contain information such as its length, its id in openstreetmap, etc
-     */
-    @Getter protected Map<String, E> properties;
+    public abstract AbstractElenaNode getDestinationNode();
+
+    public abstract Map<String, E> getProperties();
 
     public List<AbstractElenaNode> getNodes(){
         List<AbstractElenaNode> nodes = new ArrayList<>();
-        nodes.add(originNode);
-        nodes.add(destinationNode);
+        nodes.add(this.getOriginNode());
+        nodes.add(this.getDestinationNode());
         return nodes;
     }
 
