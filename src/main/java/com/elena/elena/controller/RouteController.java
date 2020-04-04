@@ -1,5 +1,10 @@
 package com.elena.elena.controller;
 
+import com.elena.elena.model.AbstractElenaGraph;
+import com.elena.elena.model.ElenaGraph;
+import com.elena.elena.routing.AbstractRouter;
+import com.elena.elena.routing.Algorithm;
+import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
 import com.elena.elena.util.Parser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +34,11 @@ public class RouteController {
         String body = "{\"values\": [ [42.704202, -71.502017], [42.7036844, -71.5020453] ," +
                 "[42.7035846, -71.5020392]]}";
 
-//        Algorithm algorithm = Algorithm.getMatchingAlogrithm(algorithmName);
-//        ElevationMode eleMode = ElevationMode.getElevationMode(elevationMode);
-//        Router router = routerFactory.getRouter(algorithm, eleMode, percentage);
-//        AbstractElenaGraph graph = new ElenaGraph("network.graphml");
-//        String responseBody = coordinateParser.coordinates2string(router.getRoute(from, to, graph));
+        Algorithm algorithm = Algorithm.getAlgorithmByName(algorithmName);
+        ElevationMode eleMode = ElevationMode.getElevationMode(elevationMode);
+        AbstractRouter router = RouterFactory.getRouter(algorithm, eleMode, percentage);
+        AbstractElenaGraph<String, String, String> graph = new ElenaGraph<>("network.graphml");
+//        String responseBody = coordinateParser.path2String(router.getRoute(from, to, graph).get(0));
         ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
 
 

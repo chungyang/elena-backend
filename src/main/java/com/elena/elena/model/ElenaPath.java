@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public class ElenaPath<T, E> extends AbstractElenaPath<T, E>{
+public class ElenaPath<T1,T2, E> extends AbstractElenaPath<T1, T2, E>{
     @Override
-    public List<AbstractElenaEdge<T, E>> getEdgesInPath() {
+    public List<AbstractElenaEdge<T1, T2, E>> getEdgesInPath() {
         return null;
     }
 

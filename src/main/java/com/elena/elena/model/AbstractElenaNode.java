@@ -1,25 +1,25 @@
 package com.elena.elena.model;
 
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-
 import java.util.List;
 
-public abstract class AbstractElenaNode<T> {
+public abstract class AbstractElenaNode<T1, T2, E> {
 
-    @Getter @NonNull protected T id;
+    public abstract T1 getId();
 
-    @Setter @Getter protected float distanceWeight;
+    public abstract float getDistanceWeight();
 
-    @Getter @Setter protected float elevationWeight;
+    public abstract float getElevationWeight();
 
-    @Getter protected List<AbstractElenaNode> neighbors;
+    public abstract List<AbstractElenaNode<T1, T2, E>> getNeighbors();
 
-    @Getter protected List<AbstractElenaEdge> outgoingEdges;
+    public abstract List<AbstractElenaEdge<T1, T2, E>> getOutGoingEdges();
 
-    @Getter protected List<AbstractElenaEdge> incomingEdges;
+    public abstract List<AbstractElenaEdge<T1, T2, E>> getIncomingEdges();
+
+    public abstract String getLatitude();
+
+    public abstract String getLongitude();
 }
 
 
