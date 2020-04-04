@@ -1,9 +1,7 @@
 package com.elena.elena.model;
 
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
-import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerVertex;
 
 import java.util.HashMap;
 import java.util.Iterator;

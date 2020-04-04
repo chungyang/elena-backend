@@ -15,4 +15,6 @@ public abstract class AbstractElenaGraph{
 
     public abstract AbstractElenaEdge getEdge(@NonNull String id);
 
+    public abstract void cleanup();
+
 }

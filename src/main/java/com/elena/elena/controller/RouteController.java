@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 
 
@@ -24,7 +25,6 @@ public class RouteController {
     private Parser coordinateParser;
 
     private AbstractElenaGraph graph;
-
 
     @RequestMapping(method= RequestMethod.GET, value="search")
     @CrossOrigin("http://localhost:3000")
@@ -53,4 +53,8 @@ public class RouteController {
         graph =  new ElenaGraph("network.graphml");;
     }
 
+    @PreDestroy
+    private void cleanup(){
+        graph.cleanup();
+    }
 }

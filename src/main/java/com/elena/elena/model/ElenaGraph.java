@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ElenaGraph extends AbstractElenaGraph{
 
@@ -20,6 +22,7 @@ public class ElenaGraph extends AbstractElenaGraph{
     private Map<String, AbstractElenaNode> nodesByName;
     private Map<String, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
+    private ExecutorService executorService = Executors.newFixedThreadPool(20);
 
     public ElenaGraph(@NonNull String graphmlFileName) throws IOException {
 
@@ -29,10 +32,21 @@ public class ElenaGraph extends AbstractElenaGraph{
         this.nodesByName = new HashMap<>();
         this.nodesByCoordinate = new HashMap<>();
         this.edges = new HashMap<>();
+        this.importGraph(graph);
+    }
+
+
+    /**
+     * This method should be used to import the whole graph. {@link #importNodes(Graph)}
+     * and {@link #importEdges(Graph)} should not be called by itself because the order
+     * of the calls matter.
+     * @param graph
+     */
+    private void importGraph(@NonNull Graph graph){
         this.importNodes(graph);
         this.importEdges(graph);
-        int i = 0;
     }
+
 
     private void importNodes(@NonNull Graph graph){
 
@@ -42,6 +56,7 @@ public class ElenaGraph extends AbstractElenaGraph{
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
+            executorService.execute(()->elenaNode.getElevationWeight());
             this.nodesById.put(elenaNode.getId(), elenaNode);
             this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
         }
@@ -93,5 +108,10 @@ public class ElenaGraph extends AbstractElenaGraph{
     @Override
     public AbstractElenaEdge getEdge(String id) {
         return this.edges.get(id);
+    }
+
+    @Override
+    public void cleanup() {
+        this.executorService.shutdown();
     }
 }
