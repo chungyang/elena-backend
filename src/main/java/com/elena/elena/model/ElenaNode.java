@@ -1,10 +1,9 @@
 package com.elena.elena.model;
 
 import com.elena.elena.util.ElenaUtils;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import lombok.Cleanup;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.DoubleNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -16,12 +15,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.shaded.kryo.util.ObjectMap;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,7 @@ public class ElenaNode extends AbstractElenaNode {
     private final Vertex tinkerVertex;
     private final AbstractElenaGraph graph;
     private final String ELEVATION_SOURCE_HOST = "nationalmap.gov/epqs/pqs.php";
+    private final String ELEVATION_KEY_NAME = "Elevation";
     private static PoolingHttpClientConnectionManager connectionManager;
 
 
@@ -39,9 +39,11 @@ public class ElenaNode extends AbstractElenaNode {
 
         this.graph = graph;
         this.tinkerVertex = tinkerVertex;
-        this.connectionManager = new PoolingHttpClientConnectionManager();
-        this.connectionManager.setMaxTotal(20);
-        this.connectionManager.setDefaultMaxPerRoute(20);
+        if(ElenaNode.connectionManager == null) {
+            this.connectionManager = new PoolingHttpClientConnectionManager();
+            this.connectionManager.setMaxTotal(20);
+            this.connectionManager.setDefaultMaxPerRoute(20);
+        }
     }
 
     @Override
@@ -75,7 +77,7 @@ public class ElenaNode extends AbstractElenaNode {
 
             final HttpGet httpGet = new HttpGet(optionalURI.get());
             try(CloseableHttpClient httpClient = HttpClients.custom()
-                    .setConnectionManager(this.connectionManager).build();
+                    .setConnectionManager(this.connectionManager).setConnectionManagerShared(true).build();
                 CloseableHttpResponse response = httpClient.execute(httpGet)){
 
                 StatusLine statusLine = response.getStatusLine();
@@ -89,11 +91,27 @@ public class ElenaNode extends AbstractElenaNode {
                     throw new ClientProtocolException("Response contains no content");
                 }
 
+                elevation = parseJsonToElevation(entity.getContent());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return elevation;
+    }
+
+    private Float parseJsonToElevation(InputStream jsonInput){
+
+        ObjectMapper mapper = new ObjectMapper();
+        Float parsedElevation = null;
+        try {
+            JsonNode jsonNode = mapper.readTree(jsonInput).findParent(ELEVATION_KEY_NAME).get(ELEVATION_KEY_NAME);
+            parsedElevation = Float.valueOf(jsonNode.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return parsedElevation;
     }
 
     @Override

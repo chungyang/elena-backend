@@ -55,7 +55,7 @@ public class RouteController {
 
     @PostConstruct
     private void init() throws IOException {
-        graph =  new ElenaGraph("network.graphml");;
+        graph =  new ElenaGraph("network.graphml");
     }
 
     @PreDestroy

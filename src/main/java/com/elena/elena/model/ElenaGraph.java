@@ -9,15 +9,17 @@ import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ElenaGraph extends AbstractElenaGraph{
 
+    //Three hashmaps are probably redundant, but there is an indeterminate number
+    //of nodes if we allow the whole world map to be loaded. Three separate hashmaps
+    //with different key format can pretty much guarantee there won't be any key collision
+    //in the future.
     private Map<String, AbstractElenaNode> nodesById;
     private Map<String, AbstractElenaNode> nodesByName;
     private Map<String, AbstractElenaNode> nodesByCoordinate;
@@ -51,14 +53,21 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
+        List<Callable<Float>> tasks = new ArrayList<>();
 
         while(vertices.hasNext()){
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            executorService.execute(()->elenaNode.getElevationWeight());
+            tasks.add(()-> elenaNode.getElevationWeight());
             this.nodesById.put(elenaNode.getId(), elenaNode);
             this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
+        }
+
+        try {
+            this.executorService.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -112,6 +121,6 @@ public class ElenaGraph extends AbstractElenaGraph{
 
     @Override
     public void cleanup() {
-        this.executorService.shutdown();
+//        this.executorService.shutdown();
     }
 }
