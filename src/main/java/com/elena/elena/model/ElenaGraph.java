@@ -16,48 +16,57 @@ import java.util.Optional;
 
 public class ElenaGraph extends AbstractElenaGraph{
 
-    private Map<String, AbstractElenaNode> nodesIdByTinkerPopId;
-    private Map<String, AbstractElenaNode> nodesIdByName;
-    private Map<String, AbstractElenaNode> nodesIdByCoordinate;
+    private Map<String, AbstractElenaNode> nodesById;
+    private Map<String, AbstractElenaNode> nodesByName;
+    private Map<String, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
 
     public ElenaGraph(@NonNull String graphmlFileName) throws IOException {
+
         Graph graph = TinkerGraph.open();
         graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
-        this.nodesIdByTinkerPopId = new HashMap<>();
-        this.nodesIdByName = new HashMap<>();
-        this.nodesIdByCoordinate = new HashMap<>();
+        this.nodesById = new HashMap<>();
+        this.nodesByName = new HashMap<>();
+        this.nodesByCoordinate = new HashMap<>();
         this.edges = new HashMap<>();
         this.importNodes(graph);
         this.importEdges(graph);
+        int i = 0;
     }
 
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
+
         while(vertices.hasNext()){
+
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            this.nodesIdByTinkerPopId.put(elenaNode.getId(), elenaNode);
-            this.nodesIdByCoordinate.put(this.getCoordinate(vertex), elenaNode);
+            this.nodesById.put(elenaNode.getId(), elenaNode);
+            this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
         }
     }
 
     private void importEdges(@NonNull Graph graph){
 
         Iterator<Edge> tinkerEdges = graph.edges();
+
         while(tinkerEdges.hasNext()){
-            AbstractElenaEdge elenaEdge = new ElenaEdge(this, tinkerEdges.next());
+
+            Edge edge = tinkerEdges.next();
+            AbstractElenaEdge elenaEdge = new ElenaEdge(this, edge);
             edges.put(elenaEdge.getId(), elenaEdge);
+
+            if(edge.property("name").isPresent()){
+                this.nodesByName.putIfAbsent(edge.property("name").value().toString(), elenaEdge.getOriginNode());
+            }
         }
     }
 
-    private String getCoordinate(Vertex vertex){
+    private String getCoordinate(AbstractElenaNode node){
 
-        String latitude = (String) vertex.property("lat").value();
-        String longitude = (String) vertex.property("lon").value();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(latitude).append(" ").append(longitude);
+        stringBuilder.append(node.getLatitude()).append(",").append(node.getLongitude());
         return stringBuilder.toString();
     }
 
@@ -67,14 +76,14 @@ public class ElenaGraph extends AbstractElenaGraph{
 
         AbstractElenaNode node;
 
-        if(this.nodesIdByTinkerPopId.containsKey(id)){
-            node =  this.nodesIdByTinkerPopId.get(id);
+        if(this.nodesById.containsKey(id)){
+            node =  this.nodesById.get(id);
         }
-        else if(this.nodesIdByCoordinate.containsKey(id)){
-            node = this.nodesIdByCoordinate.get(id);
+        else if(this.nodesByCoordinate.containsKey(id)){
+            node = this.nodesByCoordinate.get(id);
         }
         else{
-            node = this.nodesIdByName.getOrDefault(id, null);
+            node = this.nodesByName.getOrDefault(id, null);
         }
 
         Optional<AbstractElenaNode> optional = Optional.ofNullable(node);
