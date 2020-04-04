@@ -41,7 +41,12 @@ public class RouteController {
         Algorithm algorithm = Algorithm.getAlgorithmByName(algorithmName);
         ElevationMode eleMode = ElevationMode.getElevationMode(elevationMode);
         AbstractRouter router = RouterFactory.getRouter(algorithm, eleMode, percentage);
-//        String responseBody = coordinateParser.path2String(router.getRoute(from, to, graph).get(0));
+
+        if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
+            //Throw an error response back
+        }
+
+        String responseBody = coordinateParser.path2String(router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0));
         ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
 
 
