@@ -9,6 +9,8 @@ public abstract class AbstractElenaPath{
 
     public abstract List<AbstractElenaEdge> getEdgesInPath();
 
-    public abstract Map<String, BigDecimal> getPathWeights();
+    public abstract Map<String, Float> getPathWeights();
+
+    public abstract void addEdgeToPath(AbstractElenaEdge edge);
 
 }
