@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractElenaPath<T1,T2, E> {
+public abstract class AbstractElenaPath{
 
-    public abstract List<AbstractElenaEdge<T1, T2, E>> getEdgesInPath();
+    public abstract List<AbstractElenaEdge> getEdgesInPath();
 
     public abstract Map<String, BigDecimal> getPathWeights();
 

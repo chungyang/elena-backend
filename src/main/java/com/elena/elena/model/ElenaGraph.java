@@ -11,14 +11,22 @@ import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 
-public class ElenaGraph<T1, T2, E> extends AbstractElenaGraph<T1, T2, E>{
+public class ElenaGraph extends AbstractElenaGraph{
 
+    private Map<String, AbstractElenaNode> nodesIdByTinkerPopId;
+    private Map<String, AbstractElenaNode> nodesIdByName;
+    private Map<String, AbstractElenaNode> nodesIdByCoordinate;
+    private Map<String, AbstractElenaEdge> edges;
 
     public ElenaGraph(@NonNull String graphmlFileName) throws IOException {
         Graph graph = TinkerGraph.open();
         graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
-        this.nodes = new HashMap<>();
+        this.nodesIdByTinkerPopId = new HashMap<>();
+        this.nodesIdByName = new HashMap<>();
+        this.nodesIdByCoordinate = new HashMap<>();
         this.edges = new HashMap<>();
         this.importNodes(graph);
         this.importEdges(graph);
@@ -28,8 +36,10 @@ public class ElenaGraph<T1, T2, E> extends AbstractElenaGraph<T1, T2, E>{
 
         Iterator<Vertex> vertices = graph.vertices();
         while(vertices.hasNext()){
-            AbstractElenaNode<T1, T2, E> elenaNode = new ElenaNode<>(this, vertices.next());
-            this.nodes.put(elenaNode.getId(), elenaNode);
+            Vertex vertex = vertices.next();
+            AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
+            this.nodesIdByTinkerPopId.put(elenaNode.getId(), elenaNode);
+            this.nodesIdByCoordinate.put(this.getCoordinate(vertex), elenaNode);
         }
     }
 
@@ -37,19 +47,42 @@ public class ElenaGraph<T1, T2, E> extends AbstractElenaGraph<T1, T2, E>{
 
         Iterator<Edge> tinkerEdges = graph.edges();
         while(tinkerEdges.hasNext()){
-            AbstractElenaEdge<T1, T2, E> elenaEdge = new ElenaEdge<>(this, tinkerEdges.next());
+            AbstractElenaEdge elenaEdge = new ElenaEdge(this, tinkerEdges.next());
             edges.put(elenaEdge.getId(), elenaEdge);
         }
     }
 
+    private String getCoordinate(Vertex vertex){
+
+        String latitude = (String) vertex.property("lat").value();
+        String longitude = (String) vertex.property("lon").value();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(latitude).append(" ").append(longitude);
+        return stringBuilder.toString();
+    }
+
 
     @Override
-    public AbstractElenaNode<T1, T2, E> getNode(T1 id) {
-        return this.nodes.get(id);
+    public Optional<AbstractElenaNode> getNode(String id) {
+
+        AbstractElenaNode node;
+
+        if(this.nodesIdByTinkerPopId.containsKey(id)){
+            node =  this.nodesIdByTinkerPopId.get(id);
+        }
+        else if(this.nodesIdByCoordinate.containsKey(id)){
+            node = this.nodesIdByCoordinate.get(id);
+        }
+        else{
+            node = this.nodesIdByName.getOrDefault(id, null);
+        }
+
+        Optional<AbstractElenaNode> optional = Optional.ofNullable(node);
+        return optional;
     }
 
     @Override
-    public AbstractElenaEdge<T1, T2, E> getEdge(T2 id) {
+    public AbstractElenaEdge getEdge(String id) {
         return this.edges.get(id);
     }
 }

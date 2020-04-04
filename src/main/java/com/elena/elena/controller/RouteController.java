@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 
@@ -21,6 +22,9 @@ public class RouteController {
 
     @Autowired
     private Parser coordinateParser;
+
+    private AbstractElenaGraph graph;
+
 
     @RequestMapping(method= RequestMethod.GET, value="search")
     @CrossOrigin("http://localhost:3000")
@@ -37,12 +41,16 @@ public class RouteController {
         Algorithm algorithm = Algorithm.getAlgorithmByName(algorithmName);
         ElevationMode eleMode = ElevationMode.getElevationMode(elevationMode);
         AbstractRouter router = RouterFactory.getRouter(algorithm, eleMode, percentage);
-        AbstractElenaGraph<String, String, String> graph = new ElenaGraph<>("network.graphml");
 //        String responseBody = coordinateParser.path2String(router.getRoute(from, to, graph).get(0));
         ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
 
 
         return responseEntity;
+    }
+
+    @PostConstruct
+    private void init() throws IOException {
+        graph =  new ElenaGraph("network.graphml");;
     }
 
 }

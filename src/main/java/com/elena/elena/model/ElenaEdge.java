@@ -9,16 +9,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ElenaEdge<T1, T2, E> extends AbstractElenaEdge<T1, T2, E> {
+public class ElenaEdge extends AbstractElenaEdge {
 
     private final Edge tinkerEdge;
-    private final AbstractElenaGraph<T1, T2, E> graph;
-    private  Map<String, E> properties;
+    private final AbstractElenaGraph graph;
+    private  Map<String, String> properties;
 
     private final String LENGTH__PROPERTY_KEY = "length";
 
 
-    public  ElenaEdge(AbstractElenaGraph<T1, T2, E> graph, Edge tinkerEdge){
+    public  ElenaEdge(AbstractElenaGraph graph, Edge tinkerEdge){
         this.tinkerEdge = tinkerEdge;
         this.graph = graph;
         properties = new HashMap<>();
@@ -27,19 +27,19 @@ public class ElenaEdge<T1, T2, E> extends AbstractElenaEdge<T1, T2, E> {
 
     private void importProperties(){
 
-        Iterator<Property<E>> properties = tinkerEdge.properties();
+        Iterator<Property<String>> properties = tinkerEdge.properties();
 
         while(properties.hasNext()){
-            Property<E> property = properties.next();
+            Property<String> property = properties.next();
             String key = property.key();
-            E value = property.value();
+            String value = property.value();
             this.properties.put(key, value);
         }
     }
 
     @Override
-    public T2 getId() {
-        return (T2) tinkerEdge.id();
+    public String getId() {
+        return (String) tinkerEdge.id();
     }
 
     @Override
@@ -53,19 +53,19 @@ public class ElenaEdge<T1, T2, E> extends AbstractElenaEdge<T1, T2, E> {
     }
 
     @Override
-    public AbstractElenaNode<T1, T2, E> getOriginNode() {
-        T1 destinationNodeId = (T1) tinkerEdge.inVertex().id();
-        return this.graph.getNode(destinationNodeId);
+    public AbstractElenaNode getOriginNode() {
+        String destinationNodeId = (String) tinkerEdge.inVertex().id();
+        return this.graph.getNode(destinationNodeId).get();
     }
 
     @Override
-    public AbstractElenaNode<T1, T2, E> getDestinationNode() {
-        T1 destinationNodeId = (T1) tinkerEdge.outVertex().id();
-        return this.graph.getNode(destinationNodeId);
+    public AbstractElenaNode getDestinationNode() {
+        String destinationNodeId = (String) tinkerEdge.outVertex().id();
+        return this.graph.getNode(destinationNodeId).get();
     }
 
     @Override
-    public Map<String, E> getProperties() {
+    public Map<String, String> getProperties() {
         return this.properties;
     }
 }

@@ -6,10 +6,10 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElenaNode<T1, T2, E> extends AbstractElenaNode<T1, T2, E> {
+public class ElenaNode extends AbstractElenaNode {
 
     private final Vertex tinkerVertex;
-    private final AbstractElenaGraph<T1, T2, E> graph;
+    private final AbstractElenaGraph graph;
     private float distanceWeight;
     private float elevationWeight;
 
@@ -20,8 +20,8 @@ public class ElenaNode<T1, T2, E> extends AbstractElenaNode<T1, T2, E> {
     }
 
     @Override
-    public T1 getId() {
-        return (T1) tinkerVertex.id();
+    public String getId() {
+        return (String) tinkerVertex.id();
     }
 
     @Override
@@ -35,42 +35,42 @@ public class ElenaNode<T1, T2, E> extends AbstractElenaNode<T1, T2, E> {
     }
 
     @Override
-    public List<AbstractElenaNode<T1, T2, E>> getNeighbors() {
+    public List<AbstractElenaNode> getNeighbors() {
 
-        List<AbstractElenaNode<T1, T2, E>> neighbors = new ArrayList<>();
+        List<AbstractElenaNode> neighbors = new ArrayList<>();
 
-        for(AbstractElenaEdge<T1, T2, E> edge : this.getOutGoingEdges()){
+        for(AbstractElenaEdge edge : this.getOutGoingEdges()){
             neighbors.add(edge.getDestinationNode());
         }
         return neighbors;
     }
 
     @Override
-    public List<AbstractElenaEdge<T1, T2, E>> getOutGoingEdges() {
+    public List<AbstractElenaEdge> getOutGoingEdges() {
 
-        List<AbstractElenaEdge<T1, T2, E>> outgoingEdges = new ArrayList<>();
+        List<AbstractElenaEdge> outgoingEdges = new ArrayList<>();
         tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
-            outgoingEdges.add(this.graph.getEdge((T2) edge.id()));
+            outgoingEdges.add(this.graph.getEdge((String) edge.id()));
         });
         return outgoingEdges;
     }
 
     @Override
-    public List<AbstractElenaEdge<T1, T2, E>> getIncomingEdges() {
-        List<AbstractElenaEdge<T1, T2, E>> outgoingEdges = new ArrayList<>();
+    public List<AbstractElenaEdge> getIncomingEdges() {
+        List<AbstractElenaEdge> outgoingEdges = new ArrayList<>();
         tinkerVertex.edges(Direction.IN).forEachRemaining(edge -> {
-            outgoingEdges.add(this.graph.getEdge((T2) edge.id()));
+            outgoingEdges.add(this.graph.getEdge((String) edge.id()));
         });
         return outgoingEdges;
     }
 
     @Override
     public String getLatitude() {
-        return null;
+        return this.tinkerVertex.property("lat").value().toString();
     }
 
     @Override
     public String getLongitude() {
-        return null;
+        return this.tinkerVertex.property("lon").value().toString();
     }
 }
