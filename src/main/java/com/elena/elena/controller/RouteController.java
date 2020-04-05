@@ -55,7 +55,11 @@ public class RouteController {
 
     @PostConstruct
     private void init() throws IOException {
-        graph =  new ElenaGraph("network.graphml");
+        long s = System.currentTimeMillis();
+        graph =  new ElenaGraph("manhattan.graphml");
+        long e = System.currentTimeMillis();
+        System.out.println(e - s);
+        int i = 0;
     }
 
     @PreDestroy
