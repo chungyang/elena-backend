@@ -1,15 +1,16 @@
 package com.elena.elena.dao;
 
 import java.io.Closeable;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
-public interface ElevationDao{
+public interface ElevationDao extends Closeable {
 
-    boolean insert(List<ElevationData> elevationData);
+    int insert(Set<ElevationData> elevationData);
 
-    boolean delete(List<ElevationData> elevationData);
+    int delete(Set<ElevationData> elevationData);
 
-    List<ElevationData> get(List<String> ids);
+    Collection<ElevationData> get(Set<ElevationData> elevationData);
 
-    boolean update(List<ElevationData> elevationData);
+    int update(Set<ElevationData> elevationData);
 }

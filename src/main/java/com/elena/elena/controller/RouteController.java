@@ -9,6 +9,7 @@ import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
 import com.elena.elena.util.Parser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class RouteController {
     private ApplicationContext appContext;
 
     @Autowired
+    @Qualifier("sqliteDao")
     private ElevationDao elevationDao;
 
     private AbstractElenaGraph graph;

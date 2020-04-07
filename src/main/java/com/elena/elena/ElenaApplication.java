@@ -30,7 +30,7 @@ public class ElenaApplication {
 		comboPooledDataSource.setJdbcUrl("jdbc:sqlite:" + sqlitePath);
 		comboPooledDataSource.setMinPoolSize(5);
 		comboPooledDataSource.setAcquireIncrement(5);
-		comboPooledDataSource.setMinPoolSize(20);
+		comboPooledDataSource.setMaxPoolSize(20);
 
 		return comboPooledDataSource;
 	}
