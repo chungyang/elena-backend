@@ -30,9 +30,26 @@ public class SqliteElevationDao implements ElevationDao{
 
     @Override
     public int insert(Set<ElevationData> elevationData) {
-        String s = concatValues2String(elevationData);
-        String sql = "INSERT INTO elevation (ID, ELEVATION) values " + s;
-        return this.jdbcTemplate.update(sql);
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("INSERT INTO elevation (ID, ELEVATION) values ");
+
+        for(ElevationData data : elevationData){
+            sqlBuilder.append("(")
+                    .append(getParamSqlString(2))
+                    .append(")")
+                    .append(",");
+        }
+        String sql = sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).toString();
+
+        return this.jdbcTemplate.update(sql, (ps)->{
+            int index = 1;
+            for(ElevationData data : elevationData){
+                ps.setString(index, data.getId());
+                ps.setString(index + 1, String.valueOf(data.getElevation()));
+                index += 2;
+            }
+        });
     }
 
     @Override
@@ -48,9 +65,17 @@ public class SqliteElevationDao implements ElevationDao{
             ids.add(data.getId());
         }
 
-        String sql = "SELECT id, elevation FROM elevation WHERE id in (" + concatValues2String(ids) + ")";
+        String sql = "SELECT id, elevation FROM elevation WHERE id in (" + getParamSqlString(ids.size()) + ")";
 
-        List<ElevationData> retrievedData = this.jdbcTemplate.query(sql, (rs, rowNum) ->
+        List<ElevationData> retrievedData = this.jdbcTemplate.query(sql,
+                (ps) -> {
+                    int index = 1;
+                    for(String id : ids){
+                        ps.setString(index, id);
+                        index++;
+                    }
+                },
+                (rs, rowNum) ->
                 new ElevationData(rs.getString("id"),
                         Float.valueOf(rs.getString("elevation"))));
 
@@ -77,10 +102,10 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
 
-    private <T> String concatValues2String(Iterable<T> values){
+    private  String getParamSqlString(int paramSize){
         StringBuilder stringBuilder = new StringBuilder();
-        for(T value : values){
-            stringBuilder.append(value.toString() + ",");
+        for(int i = 0; i < paramSize; i++){
+            stringBuilder.append("?,");
         }
 
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();

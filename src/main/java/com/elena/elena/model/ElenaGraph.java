@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 
-@Component
 public class ElenaGraph extends AbstractElenaGraph{
 
     //Three hashmaps are probably redundant, but there is an indeterminate number
@@ -25,7 +24,8 @@ public class ElenaGraph extends AbstractElenaGraph{
     private Map<String, AbstractElenaNode> nodesByName;
     private Map<String, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
-    private ElevationDao elevationDao;
+    private int BATCH_PROCESS_NUMBER = 20;
+    private final ElevationDao elevationDao;
 
 
     public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
@@ -57,21 +57,34 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
+        Map<ElevationData, AbstractElenaNode> data = new HashMap<>();
 
         while(vertices.hasNext()){
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            Set<ElevationData> data = new HashSet<>();
-            data.add(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()));
+            data.put(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()), elenaNode);
 
-            for(ElevationData d : elevationDao.get(data)){
-                elenaNode.setElevationWeight(d.getElevation());
+            if(data.size() == BATCH_PROCESS_NUMBER){
+                for(ElevationData d : elevationDao.get(data.keySet())){
+                    data.get(d).setElevationWeight(d.getElevation());
+                }
+                data.clear();
             }
+
             this.nodesById.put(elenaNode.getId(), elenaNode);
             this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
         }
+
+        //Leftover processing
+        if(!data.isEmpty()) {
+            for (ElevationData d : elevationDao.get(data.keySet())) {
+                data.get(d).setElevationWeight(d.getElevation());
+            }
+        }
     }
+
+
 
     private void importEdges(@NonNull Graph graph){
 
