@@ -4,11 +4,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractElenaGraph{
 
     @Setter @Getter protected AbstractElenaNode currentNode;
+
+    public abstract Collection<AbstractElenaNode> getAllNodes();
 
     public abstract Optional<AbstractElenaNode> getNode(@NonNull String id);
 

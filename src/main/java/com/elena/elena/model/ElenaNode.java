@@ -3,13 +3,16 @@ package com.elena.elena.model;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ElenaNode extends AbstractElenaNode {
 
     private final Vertex tinkerVertex;
     private final AbstractElenaGraph graph;
+    private Map<AbstractElenaNode, AbstractElenaEdge> outgoingEdges = new HashMap();
+    private List<AbstractElenaEdge> incomingEdges = new ArrayList<>();
+    private List<AbstractElenaNode> neighbors = new ArrayList<>();
+
 
     public ElenaNode(AbstractElenaGraph graph, Vertex tinkerVertex){
 
@@ -33,33 +36,37 @@ public class ElenaNode extends AbstractElenaNode {
     }
 
     @Override
-    public List<AbstractElenaNode> getNeighbors() {
+    public Collection<AbstractElenaNode> getNeighbors() {
 
-        List<AbstractElenaNode> neighbors = new ArrayList<>();
-
-        for(AbstractElenaEdge edge : this.getOutGoingEdges()){
-            neighbors.add(edge.getDestinationNode());
+        if(neighbors.isEmpty()) {
+            for (AbstractElenaEdge edge : this.getOutGoingEdges()) {
+                neighbors.add(edge.getDestinationNode());
+            }
         }
         return neighbors;
     }
 
     @Override
-    public List<AbstractElenaEdge> getOutGoingEdges() {
+    public Collection<AbstractElenaEdge> getOutGoingEdges() {
 
-        List<AbstractElenaEdge> outgoingEdges = new ArrayList<>();
-        tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
-            outgoingEdges.add(this.graph.getEdge((String) edge.id()));
-        });
-        return outgoingEdges;
+        if(outgoingEdges.isEmpty()) {
+            tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
+                outgoingEdges.put(this.graph.getNode((String) edge.outVertex().id()).get(),
+                        this.graph.getEdge((String) edge.id()));
+            });
+        }
+        return outgoingEdges.values();
     }
 
     @Override
-    public List<AbstractElenaEdge> getIncomingEdges() {
-        List<AbstractElenaEdge> outgoingEdges = new ArrayList<>();
-        tinkerVertex.edges(Direction.IN).forEachRemaining(edge -> {
-            outgoingEdges.add(this.graph.getEdge((String) edge.id()));
-        });
-        return outgoingEdges;
+    public Collection<AbstractElenaEdge> getIncomingEdges() {
+
+        if(incomingEdges.isEmpty()) {
+            tinkerVertex.edges(Direction.IN).forEachRemaining(edge -> {
+                incomingEdges.add(this.graph.getEdge((String) edge.id()));
+            });
+        }
+        return incomingEdges;
     }
 
     @Override
@@ -70,6 +77,11 @@ public class ElenaNode extends AbstractElenaNode {
     @Override
     public String getLongitude() {
         return this.tinkerVertex.property("lon").value().toString();
+    }
+
+    @Override
+    public Optional<AbstractElenaEdge> getEdge(AbstractElenaNode destinationNode) {
+        return Optional.ofNullable(outgoingEdges.getOrDefault(destinationNode, null));
     }
 
 }

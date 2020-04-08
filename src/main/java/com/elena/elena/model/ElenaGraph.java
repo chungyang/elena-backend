@@ -111,6 +111,11 @@ public class ElenaGraph extends AbstractElenaGraph{
 
 
     @Override
+    public Collection<AbstractElenaNode> getAllNodes() {
+        return nodesById.values();
+    }
+
+    @Override
     public Optional<AbstractElenaNode> getNode(String id) {
 
         AbstractElenaNode node;

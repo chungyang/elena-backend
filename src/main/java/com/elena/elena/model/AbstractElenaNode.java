@@ -3,7 +3,9 @@ package com.elena.elena.model;
 
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 public abstract class AbstractElenaNode {
@@ -22,15 +24,17 @@ public abstract class AbstractElenaNode {
 
     public abstract Float getElevationWeight();
 
-    public abstract List<AbstractElenaNode> getNeighbors();
+    public abstract Collection<AbstractElenaNode> getNeighbors();
 
-    public abstract List<AbstractElenaEdge> getOutGoingEdges();
+    public abstract Collection<AbstractElenaEdge> getOutGoingEdges();
 
-    public abstract List<AbstractElenaEdge> getIncomingEdges();
+    public abstract Collection<AbstractElenaEdge> getIncomingEdges();
 
     public abstract String getLatitude();
 
     public abstract String getLongitude();
+
+    public abstract Optional<AbstractElenaEdge> getEdge(AbstractElenaNode destinationNode);
 
 }
 
