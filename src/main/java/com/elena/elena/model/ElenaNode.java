@@ -1,5 +1,6 @@
 package com.elena.elena.model;
 
+import com.elena.elena.dao.ElevationData;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
@@ -82,6 +83,22 @@ public class ElenaNode extends AbstractElenaNode {
     @Override
     public Optional<AbstractElenaEdge> getEdge(AbstractElenaNode destinationNode) {
         return Optional.ofNullable(outgoingEdges.getOrDefault(destinationNode, null));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(o == this){
+            return true;
+        }
+        ElenaNode node = (ElenaNode) o;
+
+        return node.getId().equals(this.getId());
+    }
+
+    @Override
+    public int hashCode(){
+        return this.getId().hashCode();
     }
 
 }
