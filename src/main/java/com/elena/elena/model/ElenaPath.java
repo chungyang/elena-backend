@@ -24,7 +24,7 @@ public class ElenaPath extends AbstractElenaPath{
     }
 
     @Override
-    public void addEdgeToPath(AbstractElenaEdge edge) {
-        this.edgesInPath.add(edge);
+    public void addEdgeToPath(int position, AbstractElenaEdge edge) {
+        this.edgesInPath.add(position, edge);
     }
 }
