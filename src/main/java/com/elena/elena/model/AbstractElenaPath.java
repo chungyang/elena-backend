@@ -10,6 +10,6 @@ public abstract class AbstractElenaPath{
 
     public abstract Map<String, Float> getPathWeights();
 
-    public abstract void addEdgeToPath(AbstractElenaEdge edge);
+    public abstract void addEdgeToPath(int position, AbstractElenaEdge edge);
 
 }
