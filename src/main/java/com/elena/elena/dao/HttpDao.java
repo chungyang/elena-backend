@@ -15,6 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -33,8 +34,8 @@ import java.util.concurrent.Executors;
 public class HttpDao implements ElevationDao{
 
     private PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-    private final String ELEVATION_KEY_NAME = "Elevation";
-    private final String ELEVATION_SOURCE_HOST = "nationalmap.gov/epqs/pqs.php";
+    @Value("${usgs.elevation.key}") private String ELEVATION_KEY_NAME;
+    @Value("${usgs.elevation.host}") private String ELEVATION_SOURCE_HOST;
     private CloseableHttpClient httpClient = HttpClients.custom()
             .setConnectionManager(this.connectionManager).setConnectionManagerShared(true).build();
     private ExecutorService executorService = Executors.newFixedThreadPool(5);

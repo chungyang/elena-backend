@@ -4,6 +4,7 @@ import com.elena.elena.util.ElenaUtils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,8 @@ import java.util.Arrays;
 @SpringBootApplication
 public class ElenaApplication {
 
+	@Value("${sqlite.db}") String sqliteFileName;
+
 
 
 	public static void main(String[] args) {
@@ -26,7 +29,7 @@ public class ElenaApplication {
 	@Bean
 	public DataSource sqliteDataSource(){
 		ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
-		String sqlitePath = ElenaUtils.getFilePath("cs520.db");
+		String sqlitePath = ElenaUtils.getFilePath(sqliteFileName);
 		comboPooledDataSource.setJdbcUrl("jdbc:sqlite:" + sqlitePath);
 		comboPooledDataSource.setMinPoolSize(5);
 		comboPooledDataSource.setAcquireIncrement(5);

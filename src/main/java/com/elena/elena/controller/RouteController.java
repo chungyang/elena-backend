@@ -65,6 +65,15 @@ public class RouteController {
         return responseEntity;
     }
 
+    @RequestMapping(method= RequestMethod.GET, value="autocomplete")
+    @CrossOrigin("http://localhost:3000")
+    @ResponseBody
+    public ResponseEntity<String> getAutocompleteList(@RequestParam("from") String from,
+                                                      @RequestParam("to") String to) {
+
+        return null;
+    }
+
     @PostConstruct
     private void init() throws IOException {
         long s = System.currentTimeMillis();
