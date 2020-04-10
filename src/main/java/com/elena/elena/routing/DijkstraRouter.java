@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Optional;
 
 public class DijkstraRouter extends AbstractRouter {
 
@@ -30,7 +31,7 @@ public class DijkstraRouter extends AbstractRouter {
         this.initializeGraph(graph, from);
 
         // Define comparator for our self-defined AbstractElenaNode
-        Comparator<AbstractElenaNode> nodeDistanceComparator = new Comparator<AbstractElenaNode> {
+        Comparator<AbstractElenaNode> nodeDistanceComparator = new Comparator<AbstractElenaNode>() {
         	@Override
         	public int compare(AbstractElenaNode n1, AbstractElenaNode n2) {
         		if(n1.getDistanceWeight() > n2.getDistanceWeight())
@@ -40,7 +41,7 @@ public class DijkstraRouter extends AbstractRouter {
         		else
         			return 0;
         	}
-        }
+        };
 
         // Initialize min-priority queue
         PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(nodeDistanceComparator);
@@ -57,10 +58,10 @@ public class DijkstraRouter extends AbstractRouter {
         		List<AbstractElenaPath> shortestPaths = new ArrayList<AbstractElenaPath>();
         		AbstractElenaPath shortestPath = new ElenaPath();
         		AbstractElenaNode currentNode = candidateNode;
-        		AbstractElenaEdge currentEdge = null;
+        		Optional<AbstractElenaEdge> currentEdge = Optional.empty();
         		while(this.nodeAncestor.containsKey(currentNode)) {
         			currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
-        			shortestPath.addEdgeToPath(0, currentEdge);
+        			shortestPath.addEdgeToPath(0, currentEdge.get());
         			currentNode = this.nodeAncestor.get(currentNode);
         		}
         		// Return the shortest path
@@ -69,7 +70,7 @@ public class DijkstraRouter extends AbstractRouter {
         	}
         	// Perform relaxation if the shortest path from source to destination hasn't been found
         	else {
-        		List<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
+        		Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
         		for(AbstractElenaEdge edge : edges) {
         			AbstractElenaNode node = edge.getDestinationNode();
         			this.relaxEdge(candidateNode, node, edge.getEdgeDistance(), nodePriorityQueue);
