@@ -7,6 +7,7 @@ import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.model.ElenaPath;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class DijkstraRouter extends AbstractRouter {
         while(true) {
         	AbstractElenaNode candidateNode = nodePriorityQueue.poll();
        		// Check if the shortest path from source to destination has been found
-        	if(candidateNode == to && candidateNode.getDistanceWeight() != Float.MAX_VALUE) {
+        	if(candidateNode == to) {
         		// Construct the path from the destination
         		List<AbstractElenaPath> shortestPaths = new ArrayList<AbstractElenaPath>();
         		AbstractElenaPath shortestPath = new ElenaPath();
@@ -82,22 +83,22 @@ public class DijkstraRouter extends AbstractRouter {
     	// Iterate through each node in graph to initialize them
     	Collection<AbstractElenaNode> nodes = graph.getAllNodes();
     	for(AbstractElenaNode node : nodes) {
-    		node.SetDistanceWeight(Float.MAX_VALUE);
+    		node.setDistanceWeight(Float.MAX_VALUE);
     		this.nodeAncestor.put(node, null);
     	}
 
     	// Initialize source node
-    	from.SetDistanceWeight(0);
+    	from.setDistanceWeight(0);
     }
 
-    public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
+    public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
     	
     	// Check if we need to relax the distance for the out node
     	if(out.getDistanceWeight() > in.getDistanceWeight() + weight) {
     		// Decrease distance of out node in the min-priority queue
     		nodePriorityQueue.remove(out);
-    		out.SetDistanceWeight(in.getDistanceWeight()+weight);
-    		this.nodeAncestor(out, in);
+    		out.setDistanceWeight(in.getDistanceWeight()+weight);
+    		this.nodeAncestor.put(out, in);
     		nodePriorityQueue.add(out);
     	}
     }
