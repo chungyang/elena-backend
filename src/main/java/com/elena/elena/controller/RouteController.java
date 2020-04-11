@@ -37,17 +37,15 @@ public class RouteController {
     private AbstractElenaGraph graph;
 
 
-
     @RequestMapping(method= RequestMethod.GET, value="search")
     @CrossOrigin("http://localhost:3000")
-    @ResponseBody
     public ResponseEntity<String> getRouteCoordinates(@RequestParam("from") String from,
                                                       @RequestParam("to") String to,
                                                       @RequestParam("algorithm") String algorithmName,
                                                       @RequestParam("elemode") String elevationMode,
                                                       @RequestParam("percentage") int percentage) throws IOException {
 
-        String body = "{\"values\": [ [42.704202, -71.502017], [42.7036844, -71.5020453] ," +
+        String body = "{ \"values\": [ [42.704202, -71.502017], [42.7036844, -71.5020453] ," +
                 "[42.7035846, -71.5020392]]}";
 
         Algorithm algorithm = Algorithm.getAlgorithmByName(algorithmName);
@@ -58,7 +56,7 @@ public class RouteController {
             //Throw an error response back
         }
 
-        String responseBody = coordinateParser.path2String(router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0));
+//        String responseBody = coordinateParser.path2String(router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0));
         ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
 
 
@@ -67,20 +65,17 @@ public class RouteController {
 
     @RequestMapping(method= RequestMethod.GET, value="autocomplete")
     @CrossOrigin("http://localhost:3000")
-    @ResponseBody
-    public ResponseEntity<String> getAutocompleteList(@RequestParam("from") String from,
-                                                      @RequestParam("to") String to) {
+    public ResponseEntity<String> getAutocompleteList(@RequestParam("name") String name) {
 
-        return null;
+        String body = "{\"values\":[{\"name\": \"new york\"}, {\"name\": \"newark\"}]}";
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
+
+        return responseEntity;
     }
 
     @PostConstruct
     private void init() throws IOException {
-        long s = System.currentTimeMillis();
         graph =  new ElenaGraph("berkeley.graphml", elevationDao);
-        long e = System.currentTimeMillis();
-        System.out.println(e - s);
-        int i = 0;
     }
 
     @PreDestroy
