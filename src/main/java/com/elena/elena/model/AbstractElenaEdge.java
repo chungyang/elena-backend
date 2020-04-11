@@ -14,6 +14,8 @@ public abstract class AbstractElenaEdge {
     public abstract String getId();
 
     public abstract float getEdgeDistance();
+    
+    public abstract void setEdgeDistance(float distance);
 
     public abstract float getEdgeElevation();
 

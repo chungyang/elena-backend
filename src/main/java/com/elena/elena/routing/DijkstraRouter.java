@@ -21,6 +21,7 @@ public class DijkstraRouter extends AbstractRouter {
 
 	// Constructor
 	public DijkstraRouter() {
+
 		this.nodeAncestor = new HashMap<>();
 	}
 

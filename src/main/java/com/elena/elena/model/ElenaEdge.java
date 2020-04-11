@@ -44,6 +44,11 @@ public class ElenaEdge extends AbstractElenaEdge {
     public float getEdgeDistance() {
         return Float.parseFloat((String) tinkerEdge.property(LENGTH__PROPERTY_KEY).value());
     }
+    
+    @Override
+    public void setEdgeDistance(float distance) {
+    	
+    }
 
     @Override
     public float getEdgeElevation() {
