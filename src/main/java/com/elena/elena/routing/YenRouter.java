@@ -41,7 +41,7 @@ public class YenRouter extends AbstractRouter{
     	// Get the shortest path at first
     	shortestPaths.add(this.router.getRoute(originNodeId, destinationNodeId, graph).get(0));
     	
-    	// Initialize min-priority queue for storing potential kth shortest paths
+    	// Initialize min-priority queue for storing potential kth shortest path
     	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
     		@Override
         	public int compare(AbstractElenaPath p1, AbstractElenaPath p2) {
@@ -78,14 +78,14 @@ public class YenRouter extends AbstractRouter{
     			pathPriorityQueue.add(totalPath);
     			// Restore edges
     			this.restoreEdges();
-    			// Check if there is a candidate path
-    			if(pathPriorityQueue.isEmpty())
-    				break;
-    			else {
-    				shortestPaths.add(pathPriorityQueue.poll());
-    				pathPriorityQueue.clear();
-    			}
     		}
+    		// Check if there is a candidate path
+			if(pathPriorityQueue.isEmpty())
+				break;
+			else {
+				shortestPaths.add(pathPriorityQueue.poll());
+				pathPriorityQueue.clear();
+			}
     	}
     	
     	return this.shortestPaths;
@@ -117,5 +117,6 @@ public class YenRouter extends AbstractRouter{
     	for(AbstractElenaEdge edge : this.restoreMap.keySet()) {
     		edge.setEdgeDistance(this.restoreMap.get(edge));
     	}
+    	this.restoreMap.clear();
     }
 }

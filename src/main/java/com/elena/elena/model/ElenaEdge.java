@@ -12,6 +12,7 @@ public class ElenaEdge extends AbstractElenaEdge {
     private final Edge tinkerEdge;
     private final AbstractElenaGraph graph;
     private  Map<String, String> properties;
+    private float edgeDistance;
 
     private final String LENGTH__PROPERTY_KEY = "length";
 
@@ -21,6 +22,7 @@ public class ElenaEdge extends AbstractElenaEdge {
         this.graph = graph;
         properties = new HashMap<>();
         this.importProperties();
+        this.edgeDistance = Float.parseFloat((String) tinkerEdge.property(LENGTH__PROPERTY_KEY).value());
     }
 
     private void importProperties(){
@@ -42,12 +44,12 @@ public class ElenaEdge extends AbstractElenaEdge {
 
     @Override
     public float getEdgeDistance() {
-        return Float.parseFloat((String) tinkerEdge.property(LENGTH__PROPERTY_KEY).value());
+        return this.edgeDistance;
     }
     
     @Override
     public void setEdgeDistance(float distance) {
-    	
+    	this.edgeDistance = distance;
     }
 
     @Override

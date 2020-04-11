@@ -26,7 +26,7 @@ public class ElenaPath extends AbstractElenaPath{
     @Override
     public float getPathTotalWeight() {
     	float pathTotalWeight = 0;
-    	for(AbstractElenaEdge edge : edgesInPath) {
+    	for(AbstractElenaEdge edge : this.edgesInPath) {
     		pathTotalWeight = pathTotalWeight + edge.getEdgeDistance();
     	}
     	return pathTotalWeight;
