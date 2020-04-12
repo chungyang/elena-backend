@@ -60,7 +60,7 @@ public class DijkstraRouter extends AbstractRouter {
         		AbstractElenaPath shortestPath = new ElenaPath();
         		AbstractElenaNode currentNode = candidateNode;
         		Optional<AbstractElenaEdge> currentEdge = Optional.empty();
-        		while(this.nodeAncestor.containsKey(currentNode)) {
+        		while(this.nodeAncestor.containsKey(currentNode) && this.nodeAncestor.get(currentNode)!=null) {
         			currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
         			shortestPath.addEdgeToPath(0, currentEdge.get());
         			currentNode = this.nodeAncestor.get(currentNode);
@@ -90,7 +90,7 @@ public class DijkstraRouter extends AbstractRouter {
     	}
 
     	// Initialize source node
-    	from.setDistanceWeight(0);
+    	from.setDistanceWeight((float)0);
     }
 
     public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {

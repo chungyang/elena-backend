@@ -28,7 +28,7 @@ public abstract class AbstractElenaNode {
 
     public abstract Collection<AbstractElenaEdge> getOutGoingEdges();
 
-    public abstract Collection<AbstractElenaEdge> getIncomingEdges();
+    public abstract Collection<AbstractElenaEdge> getInComingEdges();
 
     public abstract String getLatitude();
 

@@ -59,13 +59,13 @@ public class ElenaEdge extends AbstractElenaEdge {
 
     @Override
     public AbstractElenaNode getOriginNode() {
-        String destinationNodeId = (String) tinkerEdge.inVertex().id();
-        return this.graph.getNode(destinationNodeId).get();
+        String originNodeId = (String) tinkerEdge.outVertex().id();
+        return this.graph.getNode(originNodeId).get();
     }
 
     @Override
     public AbstractElenaNode getDestinationNode() {
-        String destinationNodeId = (String) tinkerEdge.outVertex().id();
+        String destinationNodeId = (String) tinkerEdge.inVertex().id();
         return this.graph.getNode(destinationNodeId).get();
     }
 

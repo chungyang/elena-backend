@@ -52,7 +52,7 @@ public class ElenaNode extends AbstractElenaNode {
 
         if(outgoingEdges.isEmpty()) {
             tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
-                outgoingEdges.put(this.graph.getNode((String) edge.outVertex().id()).get(),
+                outgoingEdges.put(this.graph.getNode((String) edge.inVertex().id()).get(),
                         this.graph.getEdge((String) edge.id()));
             });
         }
@@ -60,7 +60,7 @@ public class ElenaNode extends AbstractElenaNode {
     }
 
     @Override
-    public Collection<AbstractElenaEdge> getIncomingEdges() {
+    public Collection<AbstractElenaEdge> getInComingEdges() {
 
         if(incomingEdges.isEmpty()) {
             tinkerVertex.edges(Direction.IN).forEachRemaining(edge -> {
