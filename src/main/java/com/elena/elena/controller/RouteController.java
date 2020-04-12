@@ -1,5 +1,9 @@
 package com.elena.elena.controller;
 
+import com.elena.elena.autocomplete.AutoCompleter;
+import com.elena.elena.autocomplete.NameSuggestion;
+import com.elena.elena.autocomplete.NameSuggestions;
+import com.elena.elena.autocomplete.TrieAutoCompleter;
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.ElenaGraph;
@@ -18,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 
 @RestController
@@ -35,6 +41,7 @@ public class RouteController {
     private ElevationDao elevationDao;
 
     private AbstractElenaGraph graph;
+    private AutoCompleter autoCompleter;
 
 
     @RequestMapping(method= RequestMethod.GET, value="search")
@@ -65,10 +72,10 @@ public class RouteController {
 
     @RequestMapping(method= RequestMethod.GET, value="autocomplete")
     @CrossOrigin("http://localhost:3000")
-    public ResponseEntity<String> getAutocompleteList(@RequestParam("name") String name) {
+    public ResponseEntity<NameSuggestions> getAutocompleteList(@RequestParam("name") String name) {
 
-        String body = "{\"values\":[{\"name\": \"new york\"}, {\"name\": \"newark\"}]}";
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
+        NameSuggestions suggestions = new NameSuggestions(autoCompleter.getNameSuggestions(name));
+        ResponseEntity<NameSuggestions> responseEntity = new ResponseEntity<>(suggestions, HttpStatus.OK);
 
         return responseEntity;
     }
@@ -76,6 +83,7 @@ public class RouteController {
     @PostConstruct
     private void init() throws IOException {
         graph =  new ElenaGraph("berkeley.graphml", elevationDao);
+        autoCompleter = new TrieAutoCompleter(graph);
     }
 
     @PreDestroy

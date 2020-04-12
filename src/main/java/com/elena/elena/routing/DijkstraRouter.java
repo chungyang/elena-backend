@@ -90,7 +90,7 @@ public class DijkstraRouter extends AbstractRouter {
     	}
 
     	// Initialize source node
-    	from.setDistanceWeight(0);
+    	from.setDistanceWeight(0f);
     }
 
     public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {

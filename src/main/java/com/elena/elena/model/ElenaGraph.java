@@ -96,9 +96,23 @@ public class ElenaGraph extends AbstractElenaGraph{
             edges.put(elenaEdge.getId(), elenaEdge);
 
             if(edge.property("name").isPresent()){
-                this.nodesByName.putIfAbsent(edge.property("name").value().toString().toLowerCase(), elenaEdge.getOriginNode());
+                String[] parsedNames = this.parseLocationNames(edge.property("name").value().toString().toLowerCase());
+                for(String name : parsedNames) {
+                    this.nodesByName.putIfAbsent(name, elenaEdge.getOriginNode());
+                }
             }
         }
+    }
+
+    /**
+     * Some edge has different names that has a format [name1, name2...]. For example, ['arden road', 'arden path']
+     */
+    private String[] parseLocationNames(String names){
+
+        String specialChar = "[\\[\\]']";
+        names = names.replaceAll(specialChar, "");
+
+        return names.split(", ");
     }
 
     private String getCoordinate(AbstractElenaNode node){
@@ -117,6 +131,11 @@ public class ElenaGraph extends AbstractElenaGraph{
     @Override
     public Collection<AbstractElenaEdge> getAllEdges() {
         return this.edges.values();
+    }
+
+    @Override
+    public Collection<String> getLocationNames() {
+        return this.nodesByName.keySet();
     }
 
     @Override
