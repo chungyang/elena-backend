@@ -14,6 +14,8 @@ public abstract class AbstractElenaGraph{
 
     public abstract Collection<AbstractElenaNode> getAllNodes();
 
+    public abstract Collection<AbstractElenaEdge> getAllEdges();
+
     public abstract Optional<AbstractElenaNode> getNode(@NonNull String id);
 
     public abstract AbstractElenaEdge getEdge(@NonNull String id);
