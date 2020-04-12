@@ -96,7 +96,7 @@ public class ElenaGraph extends AbstractElenaGraph{
             edges.put(elenaEdge.getId(), elenaEdge);
 
             if(edge.property("name").isPresent()){
-                this.nodesByName.putIfAbsent(edge.property("name").value().toString(), elenaEdge.getOriginNode());
+                this.nodesByName.putIfAbsent(edge.property("name").value().toString().toLowerCase(), elenaEdge.getOriginNode());
             }
         }
     }
@@ -115,8 +115,14 @@ public class ElenaGraph extends AbstractElenaGraph{
     }
 
     @Override
+    public Collection<AbstractElenaEdge> getAllEdges() {
+        return this.edges.values();
+    }
+
+    @Override
     public Optional<AbstractElenaNode> getNode(String id) {
 
+        id = id.toLowerCase();
         AbstractElenaNode node;
 
         if(this.nodesById.containsKey(id)){
