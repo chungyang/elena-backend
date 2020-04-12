@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractElenaGraph{
@@ -15,6 +14,8 @@ public abstract class AbstractElenaGraph{
     public abstract Collection<AbstractElenaNode> getAllNodes();
 
     public abstract Collection<AbstractElenaEdge> getAllEdges();
+
+    public abstract Collection<String> getLocationNames();
 
     public abstract Optional<AbstractElenaNode> getNode(@NonNull String id);
 

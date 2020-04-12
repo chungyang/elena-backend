@@ -14,7 +14,6 @@ public class ElenaNode extends AbstractElenaNode {
     private List<AbstractElenaEdge> incomingEdges = new ArrayList<>();
     private List<AbstractElenaNode> neighbors = new ArrayList<>();
 
-
     public ElenaNode(AbstractElenaGraph graph, Vertex tinkerVertex){
 
         this.graph = graph;
@@ -100,5 +99,4 @@ public class ElenaNode extends AbstractElenaNode {
     public int hashCode(){
         return this.getId().hashCode();
     }
-
 }

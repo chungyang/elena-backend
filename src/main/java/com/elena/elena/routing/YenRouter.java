@@ -5,7 +5,6 @@ import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.model.AbstractElenaEdge;
 import com.elena.elena.model.ElenaPath;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.PriorityQueue;

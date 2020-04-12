@@ -46,7 +46,7 @@ public class RouterTest {
 	public void dijkstraTest() {
 		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n7").get(), graph);
 		Weight distance = Weight.getWeightByName("distance");
-		Float expected = (float) 4.0;
+		Float expected = (float) 3.0;
 		Float actual = shortestPaths.get(0).getPathWeights().get(distance);
 		assertEquals(expected, actual);
 	}
@@ -56,7 +56,7 @@ public class RouterTest {
 	public void yenTest() {
 		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n7").get(), graph);
 		Weight distance = Weight.getWeightByName("distance");
-		Float expected = (float) 4.0;
+		Float expected = (float) 3.0;
 		Float actual = shortestPaths.get(0).getPathWeights().get(distance);
 		assertEquals(expected, actual);
 	}

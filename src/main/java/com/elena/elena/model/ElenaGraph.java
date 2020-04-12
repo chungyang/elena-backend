@@ -26,7 +26,6 @@ public class ElenaGraph extends AbstractElenaGraph{
     private int BATCH_PROCESS_NUMBER = 20;
     private final ElevationDao elevationDao;
 
-
     public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
 
         Graph graph = TinkerGraph.open();
@@ -39,7 +38,6 @@ public class ElenaGraph extends AbstractElenaGraph{
         this.importGraph(graph);
     }
 
-
     /**
      * This method should be used to import the whole graph. {@link #importNodes(Graph)}
      * and {@link #importEdges(Graph)} should not be called by itself because the order
@@ -51,7 +49,6 @@ public class ElenaGraph extends AbstractElenaGraph{
         this.importNodes(graph);
         this.importEdges(graph);
     }
-
 
     private void importNodes(@NonNull Graph graph){
 
@@ -83,8 +80,6 @@ public class ElenaGraph extends AbstractElenaGraph{
         }
     }
 
-
-
     private void importEdges(@NonNull Graph graph){
 
         Iterator<Edge> tinkerEdges = graph.edges();
@@ -96,9 +91,23 @@ public class ElenaGraph extends AbstractElenaGraph{
             edges.put(elenaEdge.getId(), elenaEdge);
 
             if(edge.property("name").isPresent()){
-                this.nodesByName.putIfAbsent(edge.property("name").value().toString().toLowerCase(), elenaEdge.getOriginNode());
+                String[] parsedNames = this.parseLocationNames(edge.property("name").value().toString().toLowerCase());
+                for(String name : parsedNames) {
+                    this.nodesByName.putIfAbsent(name, elenaEdge.getOriginNode());
+                }
             }
         }
+    }
+
+    /**
+     * Some edge has different names that has a format [name1, name2...]. For example, ['arden road', 'arden path']
+     */
+    private String[] parseLocationNames(String names){
+
+        String specialChar = "[\\[\\]']";
+        names = names.replaceAll(specialChar, "");
+
+        return names.split(", ");
     }
 
     private String getCoordinate(AbstractElenaNode node){
@@ -108,7 +117,6 @@ public class ElenaGraph extends AbstractElenaGraph{
         return stringBuilder.toString();
     }
 
-
     @Override
     public Collection<AbstractElenaNode> getAllNodes() {
         return nodesById.values();
@@ -117,6 +125,11 @@ public class ElenaGraph extends AbstractElenaGraph{
     @Override
     public Collection<AbstractElenaEdge> getAllEdges() {
         return this.edges.values();
+    }
+
+    @Override
+    public Collection<String> getLocationNames() {
+        return this.nodesByName.keySet();
     }
 
     @Override

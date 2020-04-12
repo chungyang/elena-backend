@@ -16,7 +16,6 @@ public class ElenaEdge extends AbstractElenaEdge {
 
     private final String LENGTH__PROPERTY_KEY = "length";
 
-
     public  ElenaEdge(AbstractElenaGraph graph, Edge tinkerEdge){
         this.tinkerEdge = tinkerEdge;
         this.graph = graph;
