@@ -28,7 +28,7 @@ public class YenRouter extends AbstractRouter{
 		
 		// Set base shortest path algorithm that Yen's is going to use
 		switch(algorithm) {
-			case A_STAR:
+			case A_STAR_YEN:
 				this.router = new AstarRouter();
 			default:
 				this.router = new DijkstraRouter();
@@ -45,9 +45,10 @@ public class YenRouter extends AbstractRouter{
     	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
     		@Override
         	public int compare(AbstractElenaPath p1, AbstractElenaPath p2) {
-        		if(p1.getPathTotalWeight() > p2.getPathTotalWeight())
+    			Weight distance = Weight.getWeightByName("distance");
+        		if(p1.getPathWeights().get(distance) > p2.getPathWeights().get(distance))
         			return 1;
-        		else if(p1.getPathTotalWeight() < p2.getPathTotalWeight())
+        		else if(p1.getPathWeights().get(distance) < p2.getPathWeights().get(distance))
         			return -1;
         		else
         			return 0;

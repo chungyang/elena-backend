@@ -16,7 +16,7 @@ public class RouterFactory  {
                 return new DijkstraRouter(); //Fill in the constructor parameters later
 
             default:
-                return new YenRouter(); //Fill in the constructor parameters later
+                return new YenRouter(1, algorithm); //Fill in the constructor parameters later
 
         }
     }

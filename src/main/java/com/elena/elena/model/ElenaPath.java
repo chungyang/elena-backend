@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+
+import com.elena.elena.routing.Weight;
 
 public class ElenaPath extends AbstractElenaPath{
 
@@ -19,17 +22,20 @@ public class ElenaPath extends AbstractElenaPath{
     }
 
     @Override
-    public Map<String, Float> getPathWeights() {
-        return null;
-    }
-    
-    @Override
-    public float getPathTotalWeight() {
-    	float pathTotalWeight = 0;
-    	for(AbstractElenaEdge edge : this.edgesInPath) {
-    		pathTotalWeight = pathTotalWeight + edge.getEdgeDistance();
-    	}
-    	return pathTotalWeight;
+    public Map<Weight, Float> getPathWeights() {
+    	
+    	// Use a hash map to store different weights in a path
+    	Map<Weight, Float> pathWeights = new HashMap<>();
+    	
+    	// Distance weight
+        Weight distance = Weight.getWeightByName("distance");
+        float pathDistance = 0;
+        for(AbstractElenaEdge edge : this.edgesInPath) {
+        	pathDistance = pathDistance + edge.getEdgeDistance();
+        }
+        pathWeights.put(distance, pathDistance);
+        
+        return pathWeights;        
     }
 
     @Override
