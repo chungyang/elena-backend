@@ -28,6 +28,9 @@ public class DijkstraRouter extends AbstractRouter {
     @Override
     public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
         
+    	// Initialize list to record shortest path
+		List<AbstractElenaPath> shortestPaths = new ArrayList<AbstractElenaPath>();
+    	
         // Initialize the graph
         this.initializeGraph(graph, from);
 
@@ -51,12 +54,14 @@ public class DijkstraRouter extends AbstractRouter {
         	nodePriorityQueue.add(node);
 
         // Perform Dijkstra algorithm to find shortest path between specified source and destination
-        while(true) {
+        while(!nodePriorityQueue.isEmpty()) {
         	AbstractElenaNode candidateNode = nodePriorityQueue.poll();
+        	// Check if there is no path to return
+        	if(candidateNode.getDistanceWeight() == Float.MAX_VALUE)
+        		return shortestPaths;
        		// Check if the shortest path from source to destination has been found
         	if(candidateNode == to) {
         		// Construct the path from the destination
-        		List<AbstractElenaPath> shortestPaths = new ArrayList<AbstractElenaPath>();
         		AbstractElenaPath shortestPath = new ElenaPath();
         		AbstractElenaNode currentNode = candidateNode;
         		Optional<AbstractElenaEdge> currentEdge = Optional.empty();
@@ -78,6 +83,8 @@ public class DijkstraRouter extends AbstractRouter {
         		}
         	}
         }
+        
+        return shortestPaths;
     }
 
     public void initializeGraph(AbstractElenaGraph graph, AbstractElenaNode from) {

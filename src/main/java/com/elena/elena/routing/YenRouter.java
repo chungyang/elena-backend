@@ -67,15 +67,18 @@ public class YenRouter extends AbstractRouter{
     				this.removeEdgeIfRootAppear(rootPath, previousPath);
     			}
     			// Compute spur path
-    			List<AbstractElenaEdge> spurPath = this.router.getRoute(spurNode, destinationNodeId, graph).get(0).getEdgesInPath();
-    			// Combine root path and spur path
-    			AbstractElenaPath totalPath = new ElenaPath();
-    			for(int j = 0; j < rootPath.size(); j++)
-    				totalPath.addEdgeToPath(totalPath.getEdgesInPath().size(), rootPath.get(j));
-    			for(int j = 0; j < spurPath.size(); j++)
-    				totalPath.addEdgeToPath(totalPath.getEdgesInPath().size(), spurPath.get(j));
-    			// Add total path with ith node as spur node into priority queue to be a candidate path
-    			pathPriorityQueue.add(totalPath);
+    			List<AbstractElenaPath> spurPaths = this.router.getRoute(spurNode, destinationNodeId, graph);
+    			List<AbstractElenaEdge> spurPath = (spurPaths.isEmpty()) ? new ArrayList<>() : spurPaths.get(0).getEdgesInPath();
+    			// Combine root path and spur path when spur path exists
+    			if(!spurPath.isEmpty()) {
+    				AbstractElenaPath totalPath = new ElenaPath();
+        			for(int j = 0; j < rootPath.size(); j++)
+        				totalPath.addEdgeToPath(totalPath.getEdgesInPath().size(), rootPath.get(j));
+        			for(int j = 0; j < spurPath.size(); j++)
+        				totalPath.addEdgeToPath(totalPath.getEdgesInPath().size(), spurPath.get(j));
+        			// Add total path with ith node as spur node into priority queue to be a candidate path
+        			pathPriorityQueue.add(totalPath);
+    			}
     			// Restore edges
     			this.restoreEdges();
     		}
