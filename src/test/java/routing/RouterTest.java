@@ -29,12 +29,12 @@ public class RouterTest {
 			List<ElevationData> emptyList = new ArrayList();
 			when(mockedElevationDao.get(any(Set.class))).thenReturn(emptyList);
 			// Create a graph with mocked ElevationDao
-			graph = new ElenaGraph("/Users/patrick/desktop/Theory_and_Practice_of_Software_Engineering/Final Project/elena-backend/src/main/resources/manual.graphml", mockedElevationDao);
+			graph = new ElenaGraph("/Users/patrick/desktop/Theory_and_Practice_of_Software_Engineering/Final Project/elena-backend/src/main/resources/simple.graphml", mockedElevationDao);
 			// Create a Dijkstra router
 			dijkstra_router = new DijkstraRouter();
 			// Create a Yen's router with Dijkstra base
 			Algorithm algorithm = Algorithm.getAlgorithmByName("dijkstra_yen");
-			yen_router = new YenRouter(3, algorithm);
+			yen_router = new YenRouter(5, algorithm);
 		}
 		catch(IOException ioException) {
 			ioException.printStackTrace();
@@ -44,7 +44,7 @@ public class RouterTest {
 	// Test Dijkstra algorithm
 	@Test
 	public void dijkstraTest() {
-		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n7").get(), graph);
+		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
 		Weight distance = Weight.getWeightByName("distance");
 		Float expected = (float) 3;
 		Float actual = shortestPaths.get(0).getPathWeights().get(distance);
@@ -54,9 +54,9 @@ public class RouterTest {
 	// Test Yen's algorithm
 	@Test
 	public void yenTest() {
-		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n7").get(), graph);
+		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
 		Weight distance = Weight.getWeightByName("distance");
-		Float expected = (float) 9;
+		Float expected = (float) 5;
 		Float actual = shortestPaths.get(2).getPathWeights().get(distance);
 		assertEquals(expected, actual);
 	}

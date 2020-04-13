@@ -38,7 +38,7 @@ public class YenRouter extends AbstractRouter{
     public List<AbstractElenaPath> getRoute(AbstractElenaNode originNodeId, AbstractElenaNode destinationNodeId, AbstractElenaGraph graph) {
         
     	// Get the shortest path at first
-    	shortestPaths.add(this.router.getRoute(originNodeId, destinationNodeId, graph).get(0));
+    	this.shortestPaths.add(this.router.getRoute(originNodeId, destinationNodeId, graph).get(0));
     	
     	// Initialize min-priority queue for storing potential kth shortest path
     	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
@@ -108,7 +108,9 @@ public class YenRouter extends AbstractRouter{
     		}
     		if(appearance) {
     			AbstractElenaEdge edge = previousPath.get(rootPath.size());
-    			this.restoreMap.put(edge, edge.getEdgeDistance());
+    			// Avoid storing distance of the same edge twice
+    			if(!this.restoreMap.containsKey(edge))
+    				this.restoreMap.put(edge, edge.getEdgeDistance());
     			edge.setEdgeDistance(Float.MAX_VALUE);
     		}
     	}

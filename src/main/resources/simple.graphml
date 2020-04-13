@@ -47,7 +47,65 @@
 		    <data key="d6">562616.7227676082</data>
 		    <data key="d7">4191595.432449817</data>
 		</node>
+		<node id="n2">
+			<data key="d0">4191595.432449817</data>
+		    <data key="d1">562616.7227676082</data>
+		    <data key="d2">53116955</data>
+		    <data key="d3">-122.2880663</data>
+		    <data key="d4">37.8696864</data>
+		    <data key="d5">POINT (562616.7227676082 4191595.432449817)</data>
+		    <data key="d6">562616.7227676082</data>
+		    <data key="d7">4191595.432449817</data>
+		</node>
+		<node id="n3">
+			<data key="d0">4191595.432449817</data>
+		    <data key="d1">562616.7227676082</data>
+		    <data key="d2">53116955</data>
+		    <data key="d3">-122.2880663</data>
+		    <data key="d4">37.8696864</data>
+		    <data key="d5">POINT (562616.7227676082 4191595.432449817)</data>
+		    <data key="d6">562616.7227676082</data>
+		    <data key="d7">4191595.432449817</data>
+		</node>
+		<node id="n4">
+			<data key="d0">4191595.432449817</data>
+		    <data key="d1">562616.7227676082</data>
+		    <data key="d2">53116955</data>
+		    <data key="d3">-122.2880663</data>
+		    <data key="d4">37.8696864</data>
+		    <data key="d5">POINT (562616.7227676082 4191595.432449817)</data>
+		    <data key="d6">562616.7227676082</data>
+		    <data key="d7">4191595.432449817</data>
+		</node>
+		<node id="n5">
+			<data key="d0">4191595.432449817</data>
+		    <data key="d1">562616.7227676082</data>
+		    <data key="d2">53116955</data>
+		    <data key="d3">-122.2880663</data>
+		    <data key="d4">37.8696864</data>
+		    <data key="d5">POINT (562616.7227676082 4191595.432449817)</data>
+		    <data key="d6">562616.7227676082</data>
+		    <data key="d7">4191595.432449817</data>
+		</node>
 		<edge source="n0" target="n1" id="e0">
+			<data key="d15">1</data>
+		</edge>
+		<edge source="n1" target="n2" id="e1">
+			<data key="d15">1</data>
+		</edge>
+		<edge source="n2" target="n3" id="e2">
+			<data key="d15">1</data>
+		</edge>
+		<edge source="n1" target="n4" id="e3">
+			<data key="d15">1</data>
+		</edge>
+		<edge source="n4" target="n3" id="e4">
+			<data key="d15">3</data>
+		</edge>
+		<edge source="n2" target="n5" id="e5">
+			<data key="d15">1</data>
+		</edge>
+		<edge source="n5" target="n3" id="e6">
 			<data key="d15">1</data>
 		</edge>
 </graph>

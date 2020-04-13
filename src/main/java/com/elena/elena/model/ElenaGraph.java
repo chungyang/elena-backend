@@ -29,7 +29,8 @@ public class ElenaGraph extends AbstractElenaGraph{
     public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
 
         Graph graph = TinkerGraph.open();
-        graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
+        graph.io(IoCore.graphml()).readGraph(graphmlFileName);
+        //graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
         this.nodesById = new HashMap<>();
         this.nodesByName = new HashMap<>();
         this.nodesByCoordinate = new HashMap<>();
