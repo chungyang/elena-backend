@@ -1,9 +1,6 @@
 package com.elena.elena.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import com.elena.elena.routing.WeightType;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -12,9 +9,10 @@ public class ElenaPath extends AbstractElenaPath{
 
     private List<AbstractElenaEdge> edgesInPath;
     private Map<WeightType, Float> weights;
+    private final String GEOMETRY_STRING_PREFIX = "LINESTRING ";
 
     public ElenaPath(){
-        edgesInPath = new ArrayList<>();
+        edgesInPath = new LinkedList<>();
         weights = new HashMap<>();
     }
 
@@ -52,6 +50,19 @@ public class ElenaPath extends AbstractElenaPath{
     @JsonValue
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{ \"values\":");
+
+        for(AbstractElenaEdge edge : this.edgesInPath){
+
+            String[] coordinates = edge.getProperties().getOrDefault("geometry", "")
+                    .substring(GEOMETRY_STRING_PREFIX.length()).replaceAll("[(),]", "").split(" ");
+
+            if(coordinates.length % 2 != 0){
+                throw new IllegalStateException("Parsed coordinates should be divisible by 2");
+            }
+            
+
+        }
 
         return stringBuilder.toString();
     }

@@ -33,7 +33,7 @@ public class RouterTest {
 			// Create a Dijkstra router
 			dijkstra_router = new DijkstraRouter();
 			// Create a Yen's router with Dijkstra base
-			Algorithm algorithm = Algorithm.getAlgorithmByName("dijkstra_yen");
+			Algorithm algorithm = Algorithm.DIJKSTRA_YEN;
 			yen_router = new YenRouter(5, algorithm);
 		}
 		catch(IOException ioException) {
@@ -45,9 +45,8 @@ public class RouterTest {
 	@Test
 	public void dijkstraTest() {
 		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Weight distance = Weight.getWeightByName("distance");
 		Float expected = (float) 3;
-		Float actual = shortestPaths.get(0).getPathWeights().get(distance);
+		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
 	
@@ -55,9 +54,8 @@ public class RouterTest {
 	@Test
 	public void yenTest() {
 		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Weight distance = Weight.getWeightByName("distance");
 		Float expected = (float) 5;
-		Float actual = shortestPaths.get(2).getPathWeights().get(distance);
+		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
 }

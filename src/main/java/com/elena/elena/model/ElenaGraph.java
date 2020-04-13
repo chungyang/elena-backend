@@ -29,8 +29,7 @@ public class ElenaGraph extends AbstractElenaGraph{
     public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
 
         Graph graph = TinkerGraph.open();
-        graph.io(IoCore.graphml()).readGraph(graphmlFileName);
-        //graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
+        graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
         this.nodesById = new HashMap<>();
         this.nodesByName = new HashMap<>();
         this.nodesByCoordinate = new HashMap<>();
@@ -47,7 +46,7 @@ public class ElenaGraph extends AbstractElenaGraph{
      */
     private void importGraph(@NonNull Graph graph){
 
-        this.importNodes(graph);
+//        this.importNodes(graph);
         this.importEdges(graph);
     }
 
@@ -90,7 +89,9 @@ public class ElenaGraph extends AbstractElenaGraph{
             Edge edge = tinkerEdges.next();
             AbstractElenaEdge elenaEdge = new ElenaEdge(this, edge);
             edges.put(elenaEdge.getId(), elenaEdge);
-
+            ElenaPath elenaPath = new ElenaPath();
+            elenaPath.addEdgeToPath(0, elenaEdge);
+            elenaPath.toString();
             if(edge.property("name").isPresent()){
                 String[] parsedNames = this.parseLocationNames(edge.property("name").value().toString().toLowerCase());
                 for(String name : parsedNames) {
