@@ -1,11 +1,11 @@
 package com.elena.elena.routing;
 
-public enum Weight {
+public enum WeightType {
 	DISTANCE, ELEVATION;
 	
 	private static final String DISTANCE_NAME = "distance";
 	
-	public static Weight getWeightByName(String name){
+	public static WeightType getWeightByName(String name){
 
         switch (name.toLowerCase()){
 

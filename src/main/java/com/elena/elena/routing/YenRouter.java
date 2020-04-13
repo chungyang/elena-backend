@@ -44,10 +44,9 @@ public class YenRouter extends AbstractRouter{
     	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
     		@Override
         	public int compare(AbstractElenaPath p1, AbstractElenaPath p2) {
-    			Weight distance = Weight.getWeightByName("distance");
-        		if(p1.getPathWeights().get(distance) > p2.getPathWeights().get(distance))
+        		if(p1.getPathWeights().get(WeightType.DISTANCE) > p2.getPathWeights().get(WeightType.DISTANCE))
         			return 1;
-        		else if(p1.getPathWeights().get(distance) < p2.getPathWeights().get(distance))
+        		else if(p1.getPathWeights().get(WeightType.DISTANCE) < p2.getPathWeights().get(WeightType.DISTANCE))
         			return -1;
         		else
         			return 0;

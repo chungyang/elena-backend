@@ -82,7 +82,7 @@ public class RouteController {
 
     @PostConstruct
     private void init() throws IOException {
-        graph =  new ElenaGraph("berkeley.graphml", elevationDao);
+        graph =  new ElenaGraph("sanfran.graphml", elevationDao);
         autoCompleter = new TrieAutoCompleter(graph);
     }
 

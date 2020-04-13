@@ -71,12 +71,12 @@ public class ElenaNode extends AbstractElenaNode {
 
     @Override
     public String getLatitude() {
-        return this.tinkerVertex.property("lat").value().toString();
+        return this.tinkerVertex.property("y").value().toString();
     }
 
     @Override
     public String getLongitude() {
-        return this.tinkerVertex.property("lon").value().toString();
+        return this.tinkerVertex.property("x").value().toString();
     }
 
     @Override
