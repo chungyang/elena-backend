@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.elena.elena.routing.WeightType;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class ElenaPath extends AbstractElenaPath{
 
@@ -36,7 +37,7 @@ public class ElenaPath extends AbstractElenaPath{
         	pathElevation += edge.getEdgeElevation();
         }
         pathWeights.put(WeightType.DISTANCE, pathDistance);
-        pathWeights.put(WeightType.ELEVATION, pathDistance);
+        pathWeights.put(WeightType.ELEVATION, pathElevation);
 
         return weights;
     }
@@ -44,5 +45,14 @@ public class ElenaPath extends AbstractElenaPath{
     @Override
     public void addEdgeToPath(int position, AbstractElenaEdge edge) {
         this.edgesInPath.add(position, edge);
+    }
+
+
+    @Override
+    @JsonValue
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        return stringBuilder.toString();
     }
 }

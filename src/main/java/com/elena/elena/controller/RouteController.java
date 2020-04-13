@@ -1,7 +1,6 @@
 package com.elena.elena.controller;
 
 import com.elena.elena.autocomplete.AutoCompleter;
-import com.elena.elena.autocomplete.NameSuggestion;
 import com.elena.elena.autocomplete.NameSuggestions;
 import com.elena.elena.autocomplete.TrieAutoCompleter;
 import com.elena.elena.dao.ElevationDao;
@@ -11,7 +10,6 @@ import com.elena.elena.routing.AbstractRouter;
 import com.elena.elena.routing.Algorithm;
 import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
-import com.elena.elena.util.Parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -22,16 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 
 @RestController
 public class RouteController {
-
-
-    @Autowired
-    private Parser coordinateParser;
 
     @Autowired
     private ApplicationContext appContext;
