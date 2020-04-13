@@ -50,7 +50,7 @@ public class ElenaPath extends AbstractElenaPath{
     @JsonValue
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{ \"values\":");
+        stringBuilder.append("{ \"values\": [");
 
         for(AbstractElenaEdge edge : this.edgesInPath){
 
@@ -60,10 +60,14 @@ public class ElenaPath extends AbstractElenaPath{
             if(coordinates.length % 2 != 0){
                 throw new IllegalStateException("Parsed coordinates should be divisible by 2");
             }
-            
 
+            //Leaflet accepts (lat,lon) pairs instead of (lon,lat) so we need to change the order here
+            //since openstreetmap stores geometry in (lon,lat)
+            for(int i = 0; i < coordinates.length; i+=2){
+                stringBuilder.append("[").append(coordinates[i+1]).append(", ").append(coordinates[i]).append("],");
+            }
         }
 
-        return stringBuilder.toString();
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1).append("]}").toString();
     }
 }

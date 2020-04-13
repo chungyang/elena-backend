@@ -46,7 +46,7 @@ public class ElenaGraph extends AbstractElenaGraph{
      */
     private void importGraph(@NonNull Graph graph){
 
-//        this.importNodes(graph);
+        this.importNodes(graph);
         this.importEdges(graph);
     }
 
@@ -83,15 +83,12 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importEdges(@NonNull Graph graph){
 
         Iterator<Edge> tinkerEdges = graph.edges();
-
         while(tinkerEdges.hasNext()){
 
             Edge edge = tinkerEdges.next();
             AbstractElenaEdge elenaEdge = new ElenaEdge(this, edge);
             edges.put(elenaEdge.getId(), elenaEdge);
-            ElenaPath elenaPath = new ElenaPath();
-            elenaPath.addEdgeToPath(0, elenaEdge);
-            elenaPath.toString();
+
             if(edge.property("name").isPresent()){
                 String[] parsedNames = this.parseLocationNames(edge.property("name").value().toString().toLowerCase());
                 for(String name : parsedNames) {

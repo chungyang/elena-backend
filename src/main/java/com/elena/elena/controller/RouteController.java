@@ -5,7 +5,9 @@ import com.elena.elena.autocomplete.NameSuggestions;
 import com.elena.elena.autocomplete.TrieAutoCompleter;
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.model.AbstractElenaGraph;
+import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.model.ElenaGraph;
+import com.elena.elena.model.ElenaPath;
 import com.elena.elena.routing.AbstractRouter;
 import com.elena.elena.routing.Algorithm;
 import com.elena.elena.routing.ElevationMode;
@@ -39,24 +41,21 @@ public class RouteController {
     @RequestMapping(method= RequestMethod.GET, value="search")
     @CrossOrigin("http://localhost:3000")
     public ResponseEntity<String> getRouteCoordinates(@RequestParam("from") String from,
-                                                      @RequestParam("to") String to,
-                                                      @RequestParam("algorithm") String algorithmName,
-                                                      @RequestParam("elemode") String elevationMode,
-                                                      @RequestParam("percentage") int percentage) throws IOException {
+                                                                 @RequestParam("to") String to,
+                                                                 @RequestParam("algorithm") String algorithmName,
+                                                                 @RequestParam("elemode") String elevationMode,
+                                                                 @RequestParam("percentage") int percentage) throws IOException {
 
-        String body = "{ \"values\": [ [42.704202, -71.502017], [42.7036844, -71.5020453] ," +
-                "[42.7035846, -71.5020392]]}";
 
-        Algorithm algorithm = Algorithm.valueOf(algorithmName);
-        ElevationMode eleMode = ElevationMode.valueOf(elevationMode);
-        AbstractRouter router = RouterFactory.getRouter(algorithm, eleMode, percentage);
+        Algorithm algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
+        ElevationMode eleMode = ElevationMode.valueOf(elevationMode.toUpperCase());
+        AbstractRouter router = RouterFactory.getRouter(Algorithm.DIJKSTRA, eleMode, percentage);
 
         if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
             //Throw an error response back
         }
-
-//        String responseBody = coordinateParser.path2String(router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0));
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
+        AbstractElenaPath path = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(path.toString(), HttpStatus.OK);
 
 
         return responseEntity;
