@@ -8,12 +8,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public class ElenaPath extends AbstractElenaPath{
 
     private List<AbstractElenaEdge> edgesInPath;
-    private Map<WeightType, Float> weights;
     private final String GEOMETRY_STRING_PREFIX = "LINESTRING ";
 
     public ElenaPath(){
         edgesInPath = new LinkedList<>();
-        weights = new HashMap<>();
     }
 
     @Override
@@ -37,7 +35,7 @@ public class ElenaPath extends AbstractElenaPath{
         pathWeights.put(WeightType.DISTANCE, pathDistance);
         pathWeights.put(WeightType.ELEVATION, pathElevation);
 
-        return weights;
+        return pathWeights;
     }
 
     @Override

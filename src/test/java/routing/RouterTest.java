@@ -29,7 +29,7 @@ public class RouterTest {
 			List<ElevationData> emptyList = new ArrayList();
 			when(mockedElevationDao.get(any(Set.class))).thenReturn(emptyList);
 			// Create a graph with mocked ElevationDao
-			graph = new ElenaGraph("/Users/patrick/desktop/Theory_and_Practice_of_Software_Engineering/Final Project/elena-backend/src/main/resources/simple.graphml", mockedElevationDao);
+			graph = new ElenaGraph("simple.graphml", mockedElevationDao);
 			// Create a Dijkstra router
 			dijkstra_router = new DijkstraRouter();
 			// Create a Yen's router with Dijkstra base
