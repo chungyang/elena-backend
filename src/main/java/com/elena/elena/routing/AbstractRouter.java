@@ -13,6 +13,6 @@ public abstract class AbstractRouter {
      * This method should implement a routing algorithm and returns
      * a list of paths
      */
-    public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNodeId, AbstractElenaNode destinationNodeId, AbstractElenaGraph graph);
+    public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph);
 
 }
