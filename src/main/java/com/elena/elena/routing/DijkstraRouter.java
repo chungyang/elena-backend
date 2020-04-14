@@ -18,19 +18,40 @@ import java.util.Optional;
 public class DijkstraRouter extends AbstractRouter {
 
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
-	private Comparator<AbstractElenaNode> comparator;
+	private Comparator<NodeWrapper> comparator;
 
 	// Constructor
 	public DijkstraRouter() {
 
 		this.nodeAncestor = new HashMap<>();
-		comparator = (n1 , n2) ->{
+		this.comparator = (n1 , n2) -> {
 			if(n1.getDistanceWeight() > n2.getDistanceWeight())
 				return 1;
 			else if(n1.getDistanceWeight() < n2.getDistanceWeight())
 				return -1;
 			else
-				return 0;};
+				return 0;
+		};
+	}
+	
+	public class NodeWrapper {
+		
+		AbstractElenaNode wrappedNode;
+		Float distanceWeight;
+		
+		// Constructor
+		public NodeWrapper(AbstractElenaNode node) {
+			this.wrappedNode = node;
+			this.distanceWeight = node.getDistanceWeight();
+		}
+		
+		public Float getDistanceWeight() {
+			return this.distanceWeight;
+		}
+		
+		public AbstractElenaNode getNode() {
+			return this.wrappedNode;
+		}
 	}
 
 	@Override
@@ -38,26 +59,24 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
-		nodeAncestor.put(from, null);
-
+		
+		// Initialize graph
 		this.initializeGraph(graph, from);
+		
 		// Initialize min-priority queue
-		PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(comparator);
-		nodePriorityQueue.add(from);
+		PriorityQueue<NodeWrapper> nodePriorityQueue = new PriorityQueue<>(comparator);
+		nodePriorityQueue.add(new NodeWrapper(from));
 
 		// Perform Dijkstra algorithm to find shortest path between specified source and destination
 		while(!nodePriorityQueue.isEmpty()) {
-			AbstractElenaNode candidateNode = nodePriorityQueue.poll();
-			// Check if there is no path to return
-			if(candidateNode.getDistanceWeight() == Float.MAX_VALUE)
-				return shortestPaths;
+			AbstractElenaNode candidateNode = nodePriorityQueue.poll().getNode();
 			// Check if the shortest path from source to destination has been found
 			if(candidateNode == to) {
 				// Construct the path from the destination
 				AbstractElenaPath shortestPath = new ElenaPath();
 				AbstractElenaNode currentNode = candidateNode;
 				Optional<AbstractElenaEdge> currentEdge;
-				while(this.nodeAncestor.containsKey(currentNode) && this.nodeAncestor.get(currentNode)!=null) {
+				while(this.nodeAncestor.get(currentNode) != null) {
 					currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
 					shortestPath.addEdgeToPath(0, currentEdge.get());
 					currentNode = this.nodeAncestor.get(currentNode);
@@ -89,16 +108,19 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Initialize source node
 		from.setDistanceWeight(0f);
+		this.nodeAncestor.put(from, null);
 	}
 
-	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
+	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<NodeWrapper> nodePriorityQueue) {
 
 		// Check if we need to relax the distance for the out node
 		if(out.getDistanceWeight() > in.getDistanceWeight() + weight) {
 			// Decrease distance of out node in the min-priority queue
 			out.setDistanceWeight(in.getDistanceWeight()+weight);
 			this.nodeAncestor.put(out, in);
-			nodePriorityQueue.add(out);
+			// Wrap the node to maintain order in min-priority queue
+			NodeWrapper wrappedOutNode = new NodeWrapper(out);
+			nodePriorityQueue.add(wrappedOutNode);
 		}
 	}
 
