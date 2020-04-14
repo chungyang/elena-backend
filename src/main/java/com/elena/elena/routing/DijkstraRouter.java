@@ -38,9 +38,9 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
-		from.setDistanceWeight(0f);
 		nodeAncestor.put(from, null);
 
+		this.initializeGraph(graph, from);
 		// Initialize min-priority queue
 		PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(comparator);
 		nodePriorityQueue.add(from);
@@ -79,6 +79,17 @@ public class DijkstraRouter extends AbstractRouter {
 		return shortestPaths;
 	}
 
+	private void initializeGraph(AbstractElenaGraph graph, AbstractElenaNode from) {
+
+		// Iterate through each node in graph to initialize them
+		Collection<AbstractElenaNode> nodes = graph.getAllNodes();
+		for(AbstractElenaNode node : nodes) {
+			node.setDistanceWeight(Float.MAX_VALUE);
+		}
+
+		// Initialize source node
+		from.setDistanceWeight(0f);
+	}
 
 	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
 
