@@ -101,4 +101,5 @@ public class DijkstraRouter extends AbstractRouter {
 			nodePriorityQueue.add(out);
 		}
 	}
+
 }

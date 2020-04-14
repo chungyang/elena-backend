@@ -7,7 +7,7 @@ import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.io.IoCore;
+import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import java.io.IOException;
@@ -29,7 +29,8 @@ public class ElenaGraph extends AbstractElenaGraph{
     public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
 
         Graph graph = TinkerGraph.open();
-        graph.io(IoCore.graphml()).readGraph(ElenaUtils.getFilePath(graphmlFileName));
+        GraphMLReader reader = GraphMLReader.build().create();
+        reader.readGraph(ElenaUtils.getFileAsInputStream(graphmlFileName), graph);
         this.nodesById = new HashMap<>();
         this.nodesByName = new HashMap<>();
         this.nodesByCoordinate = new HashMap<>();
