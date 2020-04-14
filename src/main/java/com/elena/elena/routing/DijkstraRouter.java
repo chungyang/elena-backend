@@ -25,16 +25,16 @@ public class DijkstraRouter extends AbstractRouter {
 
 		this.nodeAncestor = new HashMap<>();
 		this.comparator = (n1 , n2) -> {
-			if(n1.getDistanceWeight() > n2.getDistanceWeight())
+			if(n1.distanceWeight > n2.distanceWeight)
 				return 1;
-			else if(n1.getDistanceWeight() < n2.getDistanceWeight())
+			else if(n1.distanceWeight < n2.distanceWeight)
 				return -1;
 			else
 				return 0;
 		};
 	}
 	
-	public class NodeWrapper {
+	private class NodeWrapper {
 		
 		AbstractElenaNode wrappedNode;
 		Float distanceWeight;
@@ -43,14 +43,6 @@ public class DijkstraRouter extends AbstractRouter {
 		public NodeWrapper(AbstractElenaNode node) {
 			this.wrappedNode = node;
 			this.distanceWeight = node.getDistanceWeight();
-		}
-		
-		public Float getDistanceWeight() {
-			return this.distanceWeight;
-		}
-		
-		public AbstractElenaNode getNode() {
-			return this.wrappedNode;
 		}
 	}
 
@@ -69,7 +61,7 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Perform Dijkstra algorithm to find shortest path between specified source and destination
 		while(!nodePriorityQueue.isEmpty()) {
-			AbstractElenaNode candidateNode = nodePriorityQueue.poll().getNode();
+			AbstractElenaNode candidateNode = nodePriorityQueue.poll().wrappedNode;
 			// Check if the shortest path from source to destination has been found
 			if(candidateNode == to) {
 				// Construct the path from the destination
