@@ -24,13 +24,14 @@ public class DijkstraRouter extends AbstractRouter {
 	public DijkstraRouter() {
 
 		this.nodeAncestor = new HashMap<>();
-		comparator = (n1 , n2) ->{
+		this.comparator = (n1 , n2) -> {
 			if(n1.getDistanceWeight() > n2.getDistanceWeight())
 				return 1;
 			else if(n1.getDistanceWeight() < n2.getDistanceWeight())
 				return -1;
 			else
-				return 0;};
+				return 0;
+		};
 	}
 
 	@Override
@@ -38,9 +39,10 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
-		nodeAncestor.put(from, null);
-
+		
+		// Initialize graph
 		this.initializeGraph(graph, from);
+		
 		// Initialize min-priority queue
 		PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(comparator);
 		nodePriorityQueue.add(from);
@@ -48,16 +50,13 @@ public class DijkstraRouter extends AbstractRouter {
 		// Perform Dijkstra algorithm to find shortest path between specified source and destination
 		while(!nodePriorityQueue.isEmpty()) {
 			AbstractElenaNode candidateNode = nodePriorityQueue.poll();
-			// Check if there is no path to return
-			if(candidateNode.getDistanceWeight() == Float.MAX_VALUE)
-				return shortestPaths;
 			// Check if the shortest path from source to destination has been found
 			if(candidateNode == to) {
 				// Construct the path from the destination
 				AbstractElenaPath shortestPath = new ElenaPath();
 				AbstractElenaNode currentNode = candidateNode;
 				Optional<AbstractElenaEdge> currentEdge;
-				while(this.nodeAncestor.containsKey(currentNode) && this.nodeAncestor.get(currentNode)!=null) {
+				while(this.nodeAncestor.get(currentNode) != null) {
 					currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
 					shortestPath.addEdgeToPath(0, currentEdge.get());
 					currentNode = this.nodeAncestor.get(currentNode);
@@ -89,6 +88,7 @@ public class DijkstraRouter extends AbstractRouter {
 
 		// Initialize source node
 		from.setDistanceWeight(0f);
+		this.nodeAncestor.put(from, null);
 	}
 
 	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
