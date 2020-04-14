@@ -1,4 +1,3 @@
-FROM openjdk:11
-VOLUME /tmp
+FROM openjdk:11-jre
 COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar", "-Dspring.profiles.active=dev"]
+ENTRYPOINT ["java","-jar","/app.jar"]
