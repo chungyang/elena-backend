@@ -37,7 +37,7 @@ public class DijkstraRouter extends AbstractRouter {
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
 
 		// Initialize list to record shortest path
-		List<AbstractElenaPath> shortestPaths = new ArrayList<AbstractElenaPath>();
+		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 		from.setDistanceWeight(0f);
 		nodeAncestor.put(from, null);
 
