@@ -18,7 +18,7 @@ import java.util.Optional;
 public class DijkstraRouter extends AbstractRouter {
 
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
-	private Comparator<AbstractElenaNode> comparator;
+	private Comparator<NodeWrapper> comparator;
 
 	// Constructor
 	public DijkstraRouter() {
@@ -33,6 +33,26 @@ public class DijkstraRouter extends AbstractRouter {
 				return 0;
 		};
 	}
+	
+	public class NodeWrapper {
+		
+		AbstractElenaNode wrappedNode;
+		Float distanceWeight;
+		
+		// Constructor
+		public NodeWrapper(AbstractElenaNode node) {
+			this.wrappedNode = node;
+			this.distanceWeight = node.getDistanceWeight();
+		}
+		
+		public Float getDistanceWeight() {
+			return this.distanceWeight;
+		}
+		
+		public AbstractElenaNode getNode() {
+			return this.wrappedNode;
+		}
+	}
 
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
@@ -44,12 +64,12 @@ public class DijkstraRouter extends AbstractRouter {
 		this.initializeGraph(graph, from);
 		
 		// Initialize min-priority queue
-		PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(comparator);
-		nodePriorityQueue.add(from);
+		PriorityQueue<NodeWrapper> nodePriorityQueue = new PriorityQueue<>(comparator);
+		nodePriorityQueue.add(new NodeWrapper(from));
 
 		// Perform Dijkstra algorithm to find shortest path between specified source and destination
 		while(!nodePriorityQueue.isEmpty()) {
-			AbstractElenaNode candidateNode = nodePriorityQueue.poll();
+			AbstractElenaNode candidateNode = nodePriorityQueue.poll().getNode();
 			// Check if the shortest path from source to destination has been found
 			if(candidateNode == to) {
 				// Construct the path from the destination
@@ -91,14 +111,16 @@ public class DijkstraRouter extends AbstractRouter {
 		this.nodeAncestor.put(from, null);
 	}
 
-	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<AbstractElenaNode> nodePriorityQueue) {
+	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<NodeWrapper> nodePriorityQueue) {
 
 		// Check if we need to relax the distance for the out node
 		if(out.getDistanceWeight() > in.getDistanceWeight() + weight) {
 			// Decrease distance of out node in the min-priority queue
 			out.setDistanceWeight(in.getDistanceWeight()+weight);
 			this.nodeAncestor.put(out, in);
-			nodePriorityQueue.add(out);
+			// Wrap the node to maintain order in min-priority queue
+			NodeWrapper wrappedOutNode = new NodeWrapper(out);
+			nodePriorityQueue.add(wrappedOutNode);
 		}
 	}
 }
