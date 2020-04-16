@@ -31,10 +31,10 @@ public class RouterTest {
 			// Create a graph with mocked ElevationDao
 			graph = new ElenaGraph("simple.graphml", mockedElevationDao);
 			// Create a Dijkstra router
-			dijkstra_router = new DijkstraRouter();
+			dijkstra_router = RouterFactory.getRouter(Algorithm.DIJKSTRA);
 			// Create a Yen's router with Dijkstra base
 			Algorithm algorithm = Algorithm.DIJKSTRA_YEN;
-			yen_router = new YenRouter(5, algorithm);
+			yen_router = RouterFactory.getRouter( Algorithm.DIJKSTRA_YEN, 100);
 		}
 		catch(IOException ioException) {
 			ioException.printStackTrace();

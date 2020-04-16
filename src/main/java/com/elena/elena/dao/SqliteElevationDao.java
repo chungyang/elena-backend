@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -121,8 +122,7 @@ public class SqliteElevationDao implements ElevationDao{
 
 
     @Override
-    public void close(){
-        //The implementation is empty because JdbcTemplate takes care of the clean
-        //up
+    public void close() throws IOException {
+        httpDao.close();
     }
 }

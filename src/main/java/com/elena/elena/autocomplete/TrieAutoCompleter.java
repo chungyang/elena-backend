@@ -1,6 +1,5 @@
 package com.elena.elena.autocomplete;
 
-import com.elena.elena.model.AbstractElenaEdge;
 import com.elena.elena.model.AbstractElenaGraph;
 
 import java.util.*;
@@ -81,7 +80,7 @@ public class TrieAutoCompleter implements AutoCompleter{
         private List<Character> characters;
         private Map<Character, Trie> nextTries;
 
-        public Trie(Boolean isWord, List<Character> initialCharacters){
+        private Trie(Boolean isWord, List<Character> initialCharacters){
             this.isWord = isWord;
             this.nextTries = new HashMap<>();
             characters = new ArrayList<>();
@@ -92,7 +91,7 @@ public class TrieAutoCompleter implements AutoCompleter{
          * Returns true if it successfully inserts a key into trie,
          * returns false otherwise.
          */
-        public boolean insertIfabsent(Character key, boolean isWord){
+        private boolean insertIfabsent(Character key, boolean isWord){
             if(!nextTries.containsKey(key)){
                 Trie nextTrie = new Trie(isWord, this.characters);
                 nextTrie.characters.add(key);

@@ -20,18 +20,11 @@ public class YenRouter extends AbstractRouter{
 	public Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
 	
 	// Constructor
-	public YenRouter(int numOfRoute, Algorithm algorithm) {
+	protected YenRouter(int numOfRoute, AbstractRouter router) {
 		
 		// Set number of routes that Yen's needs to return
 		this.numOfRoute = numOfRoute;
-		
-		// Set base shortest path algorithm that Yen's is going to use
-		switch(algorithm) {
-			case A_STAR_YEN:
-				this.router = new AstarRouter();
-			default:
-				this.router = new DijkstraRouter();
-		}
+		this.router = router;
 	}
 	
     @Override

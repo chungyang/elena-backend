@@ -2,6 +2,7 @@ package com.elena.elena.model;
 
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
+import com.elena.elena.routing.DijkstraRouter;
 import com.elena.elena.util.ElenaUtils;
 import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -45,10 +46,14 @@ public class ElenaGraph extends AbstractElenaGraph{
      * of the calls matter.
      * @param graph
      */
-    private void importGraph(@NonNull Graph graph){
+    private void importGraph(@NonNull Graph graph) {
 
-        this.importNodes(graph);
-        this.importEdges(graph);
+        try(this.elevationDao){
+            this.importNodes(graph);
+            this.importEdges(graph);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void importNodes(@NonNull Graph graph){

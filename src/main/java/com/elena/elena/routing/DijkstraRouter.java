@@ -21,7 +21,7 @@ public class DijkstraRouter extends AbstractRouter {
 	private Comparator<NodeWrapper> comparator;
 
 	// Constructor
-	public DijkstraRouter() {
+	protected DijkstraRouter() {
 
 		this.nodeAncestor = new HashMap<>();
 		this.comparator = (n1 , n2) -> {

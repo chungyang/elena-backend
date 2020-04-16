@@ -14,6 +14,7 @@ import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.io.IOException;
 
 
 @RestController
+@CrossOrigin(origins = {"https://elena-front.s3.amazonaws.com/index.html","http://localhost:3000"})
 public class RouteController {
 
     @Autowired
@@ -39,7 +41,6 @@ public class RouteController {
 
 
     @RequestMapping(method= RequestMethod.GET, value="search")
-    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<String> getRouteCoordinates(@RequestParam("from") String from,
                                                                  @RequestParam("to") String to,
                                                                  @RequestParam("algorithm") String algorithmName,
@@ -49,7 +50,7 @@ public class RouteController {
 
         Algorithm algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
         ElevationMode eleMode = ElevationMode.valueOf(elevationMode.toUpperCase());
-        AbstractRouter router = RouterFactory.getRouter(Algorithm.DIJKSTRA, eleMode, percentage);
+        AbstractRouter router = RouterFactory.getRouter(Algorithm.DIJKSTRA, percentage);
 
         if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
             //Throw an error response back
@@ -62,13 +63,19 @@ public class RouteController {
     }
 
     @RequestMapping(method= RequestMethod.GET, value="autocomplete")
-    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<NameSuggestions> getAutocompleteList(@RequestParam("name") String name) {
 
         NameSuggestions suggestions = new NameSuggestions(autoCompleter.getNameSuggestions(name));
         ResponseEntity<NameSuggestions> responseEntity = new ResponseEntity<>(suggestions, HttpStatus.OK);
 
         return responseEntity;
+    }
+
+    @RequestMapping(method= RequestMethod.GET, value="welcome")
+    @CrossOrigin("*")
+    public String getAutocompleteList() {
+        
+        return "Welcome to Elena";
     }
 
     @PostConstruct
