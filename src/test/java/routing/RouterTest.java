@@ -19,6 +19,7 @@ public class RouterTest {
 	private AbstractElenaGraph graph;
 	private AbstractRouter dijkstra_router;
 	private AbstractRouter yen_router;
+	private AbstractRouter astar_router;
 	
 	// Set up graph and router
 	@Before
@@ -35,6 +36,8 @@ public class RouterTest {
 			// Create a Yen's router with Dijkstra base
 			Algorithm algorithm = Algorithm.DIJKSTRA_YEN;
 			yen_router = RouterFactory.getRouter( Algorithm.DIJKSTRA_YEN, 100);
+			// Create a Astar router
+			astar_router = new AstarRouter();
 		}
 		catch(IOException ioException) {
 			ioException.printStackTrace();
@@ -57,5 +60,14 @@ public class RouterTest {
 		Float expected = (float) 5;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
+	}
+	
+	// Test Astar algorithm
+	@Test
+	public void astarTest() {
+		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+		Float expected = (float) 3;
+		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
+		assertEquals(expected, actual);	
 	}
 }
