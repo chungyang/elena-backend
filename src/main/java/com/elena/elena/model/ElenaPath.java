@@ -9,9 +9,11 @@ public class ElenaPath extends AbstractElenaPath{
 
     private List<AbstractElenaEdge> edgesInPath;
     private final String GEOMETRY_STRING_PREFIX = "LINESTRING ";
+    private Map<WeightType, Float> pathWeights;
 
     public ElenaPath(){
         edgesInPath = new LinkedList<>();
+        pathWeights = new HashMap<>();
     }
 
     @Override
@@ -21,19 +23,18 @@ public class ElenaPath extends AbstractElenaPath{
 
     @Override
     public Map<WeightType, Float> getPathWeights() {
-    	
-    	// Use a hash map to store different weights in a path
-    	Map<WeightType, Float> pathWeights = new HashMap<>();
-    	
-    	// Distance weight
-        float pathDistance = 0;
-        float pathElevation = 0;
-        for(AbstractElenaEdge edge : this.edgesInPath) {
-        	pathDistance += edge.getEdgeDistance();
-        	pathElevation += edge.getEdgeElevation();
+
+        if(pathWeights.isEmpty()) {
+            // Distance weight
+            float pathDistance = 0;
+            float pathElevation = 0;
+            for (AbstractElenaEdge edge : this.edgesInPath) {
+                pathDistance += edge.getEdgeDistance();
+                pathElevation += edge.getEdgeElevation();
+            }
+            pathWeights.put(WeightType.DISTANCE, pathDistance);
+            pathWeights.put(WeightType.ELEVATION, pathElevation);
         }
-        pathWeights.put(WeightType.DISTANCE, pathDistance);
-        pathWeights.put(WeightType.ELEVATION, pathElevation);
 
         return pathWeights;
     }

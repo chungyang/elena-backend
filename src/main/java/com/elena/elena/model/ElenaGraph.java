@@ -51,6 +51,12 @@ public class ElenaGraph extends AbstractElenaGraph{
         try(this.elevationDao){
             this.importNodes(graph);
             this.importEdges(graph);
+            //Because a node lazily initializes its outgoing edges, the computation
+            //is done in downstream tasks and thus cause them to be slower. Doing
+            //initialization here improve performance.
+            for(AbstractElenaNode node : nodesById.values()){
+                node.getOutGoingEdges();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

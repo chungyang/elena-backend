@@ -14,10 +14,12 @@ import java.util.HashMap;
 
 public class YenRouter extends AbstractRouter{
 	
-	public int numOfRoute;
-	public AbstractRouter router;
-	public List<AbstractElenaPath> shortestPaths= new ArrayList<AbstractElenaPath>();
-	public Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
+	private int numOfRoute;
+	private AbstractRouter router;
+	private List<AbstractElenaPath> shortestPaths= new ArrayList<>();
+	private Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
+	private Comparator<AbstractElenaPath> comparator;
+
 	
 	// Constructor
 	protected YenRouter(int numOfRoute, AbstractRouter router) {
@@ -25,6 +27,14 @@ public class YenRouter extends AbstractRouter{
 		// Set number of routes that Yen's needs to return
 		this.numOfRoute = numOfRoute;
 		this.router = router;
+		this.comparator = (p1, p2)->{
+			if(p1.getPathWeights().get(WeightType.DISTANCE) > p2.getPathWeights().get(WeightType.DISTANCE))
+				return 1;
+			else if(p1.getPathWeights().get(WeightType.DISTANCE) < p2.getPathWeights().get(WeightType.DISTANCE))
+				return -1;
+			else
+				return 0;
+		};
 	}
 	
     @Override
@@ -32,20 +42,8 @@ public class YenRouter extends AbstractRouter{
         
     	// Get the shortest path at first
     	this.shortestPaths.add(this.router.getRoute(originNodeId, destinationNodeId, graph).get(0));
-    	
-    	// Initialize min-priority queue for storing potential kth shortest path
-    	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
-    		@Override
-        	public int compare(AbstractElenaPath p1, AbstractElenaPath p2) {
-        		if(p1.getPathWeights().get(WeightType.DISTANCE) > p2.getPathWeights().get(WeightType.DISTANCE))
-        			return 1;
-        		else if(p1.getPathWeights().get(WeightType.DISTANCE) < p2.getPathWeights().get(WeightType.DISTANCE))
-        			return -1;
-        		else
-        			return 0;
-        	}
-    	};
-    	PriorityQueue<AbstractElenaPath> pathPriorityQueue = new PriorityQueue<>(pathDistanceComparator);
+
+    	PriorityQueue<AbstractElenaPath> pathPriorityQueue = new PriorityQueue<>(this.comparator);
     	
     	// Compute top k shortest path with Yen's algorithm
     	for(int k = 1; k < this.numOfRoute; k++) {

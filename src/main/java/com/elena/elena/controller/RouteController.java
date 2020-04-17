@@ -12,6 +12,7 @@ import com.elena.elena.routing.AbstractRouter;
 import com.elena.elena.routing.Algorithm;
 import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
+import com.elena.elena.util.ElenaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
-@CrossOrigin(origins = {"https://elena-front.s3.amazonaws.com/index.html","http://localhost:3000"})
+@CrossOrigin(origins = {"http://elena-front.s3-website-us-east-1.amazonaws.com","http://localhost:3000"})
 public class RouteController {
 
     @Autowired
@@ -50,13 +52,16 @@ public class RouteController {
 
         Algorithm algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
         ElevationMode eleMode = ElevationMode.valueOf(elevationMode.toUpperCase());
-        AbstractRouter router = RouterFactory.getRouter(Algorithm.DIJKSTRA, percentage);
+        AbstractRouter router = RouterFactory.getRouter(algorithm, percentage);
 
         if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
             //Throw an error response back
         }
-        AbstractElenaPath path = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph).get(0);
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(path.toString(), HttpStatus.OK);
+        long s = System.currentTimeMillis();
+        List<AbstractElenaPath> paths = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph);
+        AbstractElenaPath selectedPath = ElenaUtils.selectPath(eleMode, paths, percentage);
+        System.out.println((float) (System.currentTimeMillis() - s) / 1000);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(selectedPath.toString(), HttpStatus.OK);
 
 
         return responseEntity;
