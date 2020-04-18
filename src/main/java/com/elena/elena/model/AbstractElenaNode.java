@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public abstract class AbstractElenaNode {
 
-    @Setter protected Float distanceWeight = Float.MAX_VALUE;
-
     /**
      * The initial elevation is set to null, concrete implementation
      * could populate it at creation
@@ -19,8 +17,6 @@ public abstract class AbstractElenaNode {
     @Setter protected Float elevationWeight;
 
     public abstract String getId();
-
-    public abstract Float getDistanceWeight();
 
     public abstract Float getElevationWeight();
 
