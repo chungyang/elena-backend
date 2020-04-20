@@ -25,10 +25,6 @@ public class ElenaNode extends AbstractElenaNode {
         return (String) tinkerVertex.id();
     }
 
-    @Override
-    public Float getDistanceWeight() {
-        return this.distanceWeight;
-    }
 
     @Override
     public Float getElevationWeight() {

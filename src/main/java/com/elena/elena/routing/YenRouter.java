@@ -8,16 +8,16 @@ import com.elena.elena.model.ElenaPath;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.HashMap;
 
 public class YenRouter extends AbstractRouter{
 	
-	public int numOfRoute;
-	public AbstractRouter router;
-	public List<AbstractElenaPath> shortestPaths= new ArrayList<AbstractElenaPath>();
-	public Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
+	private int numOfRoute;
+	private AbstractRouter router;
+	private List<AbstractElenaPath> shortestPaths= new ArrayList<>();
+	private Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
+
 	
 	// Constructor
 	protected YenRouter(int numOfRoute, AbstractRouter router) {
@@ -32,20 +32,15 @@ public class YenRouter extends AbstractRouter{
         
     	// Get the shortest path at first
     	this.shortestPaths.add(this.router.getRoute(originNodeId, destinationNodeId, graph).get(0));
-    	
-    	// Initialize min-priority queue for storing potential kth shortest path
-    	Comparator<AbstractElenaPath> pathDistanceComparator = new Comparator<AbstractElenaPath>() {
-    		@Override
-        	public int compare(AbstractElenaPath p1, AbstractElenaPath p2) {
-        		if(p1.getPathWeights().get(WeightType.DISTANCE) > p2.getPathWeights().get(WeightType.DISTANCE))
-        			return 1;
-        		else if(p1.getPathWeights().get(WeightType.DISTANCE) < p2.getPathWeights().get(WeightType.DISTANCE))
-        			return -1;
-        		else
-        			return 0;
-        	}
-    	};
-    	PriorityQueue<AbstractElenaPath> pathPriorityQueue = new PriorityQueue<>(pathDistanceComparator);
+
+    	PriorityQueue<AbstractElenaPath> pathPriorityQueue = new PriorityQueue<>((p1, p2)->{
+			if(p1.getPathWeights().get(WeightType.DISTANCE) > p2.getPathWeights().get(WeightType.DISTANCE))
+				return 1;
+			else if(p1.getPathWeights().get(WeightType.DISTANCE) < p2.getPathWeights().get(WeightType.DISTANCE))
+				return -1;
+			else
+				return 0;
+		});
     	
     	// Compute top k shortest path with Yen's algorithm
     	for(int k = 1; k < this.numOfRoute; k++) {
@@ -101,8 +96,7 @@ public class YenRouter extends AbstractRouter{
     		if(appearance) {
     			AbstractElenaEdge edge = previousPath.get(rootPath.size());
     			// Avoid storing distance of the same edge twice
-    			if(!this.restoreMap.containsKey(edge))
-    				this.restoreMap.put(edge, edge.getEdgeDistance());
+				this.restoreMap.putIfAbsent(edge, edge.getEdgeDistance());
     			edge.setEdgeDistance(Float.MAX_VALUE);
     		}
     	}

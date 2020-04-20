@@ -16,10 +16,10 @@ public class RouterFactory  {
                 return new DijkstraRouter();
 
             case A_STAR_YEN:
-                return new YenRouter(1, RouterFactory.getRouter(Algorithm.A_STAR));
+                return new YenRouter(5, RouterFactory.getRouter(Algorithm.A_STAR));
 
             default:
-                return new YenRouter(1, RouterFactory.getRouter(Algorithm.DIJKSTRA));
+                return new YenRouter(5, RouterFactory.getRouter(Algorithm.DIJKSTRA));
 
         }
     }

@@ -53,7 +53,7 @@ public class ElenaEdge extends AbstractElenaEdge {
 
     @Override
     public float getEdgeElevation() {
-        return 0;
+        return Math.max(0, this.getDestinationNode().getElevationWeight() - this.getOriginNode().getElevationWeight());
     }
 
     @Override
