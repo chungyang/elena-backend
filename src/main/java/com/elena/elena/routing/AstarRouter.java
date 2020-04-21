@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,21 +21,27 @@ public class AstarRouter extends AbstractRouter{
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> node_Gscore; // Distance from source
 	private Map<AbstractElenaNode, Float> node_Hscore; // Distance from destination
-	private Comparator<AbstractElenaNode> comparator;
+	private Map<AbstractElenaNode, Float> nodeTentativeDistance;
+	public static final double R = 6372.8; // In kilometers (for H_score Calculation)
 	
 	// Constructor
 	public AstarRouter() {
 		this.nodeAncestor = new HashMap<>();
 		this.node_Gscore = new HashMap<>();
 		this.node_Hscore = new HashMap<>();
-		this.comparator = (n1 , n2) -> {
-			if(n1.getDistanceWeight() > n2.getDistanceWeight())
-				return 1;
-			else if(n1.getDistanceWeight() < n2.getDistanceWeight())
-				return -1;
-			else
-				return 0;
-		};
+		this.nodeTentativeDistance = new HashMap<>();
+	}
+	
+	private class NodeWrapper {
+		
+		AbstractElenaNode wrappedNode;
+		Float distanceWeight;
+		
+		// Constructor
+		public NodeWrapper(AbstractElenaNode node, Float distanceWeight) {
+			this.wrappedNode = node;
+			this.distanceWeight = distanceWeight;
+		}
 	}
 
     @Override
@@ -54,17 +59,25 @@ public class AstarRouter extends AbstractRouter{
 		// f = g (distance from source) + h (distance from destination)
 		this.node_Gscore.put(from, 0f);
 		float source_f_score = this.node_Gscore.get(from) + this.node_Hscore.get(from);
-		from.setDistanceWeight(source_f_score);
+		nodeTentativeDistance.put(from, source_f_score);
 		
 		// Initialize open list
-		PriorityQueue<AbstractElenaNode> nodePriorityQueue = new PriorityQueue<>(comparator);
-		nodePriorityQueue.add(from);
+		PriorityQueue<NodeWrapper> nodePriorityQueue = new PriorityQueue<>((n1 , n2) -> {
+			if(n1.distanceWeight > n2.distanceWeight)
+				return 1;
+			else if(n1.distanceWeight < n2.distanceWeight)
+				return -1;
+			else
+				return 0;
+		});
+		
+		nodePriorityQueue.add(new NodeWrapper(from, nodeTentativeDistance.get(from)));
 
 		// Initialize closed list
 		Set<AbstractElenaNode> explored = new HashSet<AbstractElenaNode>();
 		
 		while(!nodePriorityQueue.isEmpty()){
-			AbstractElenaNode candidateNode = nodePriorityQueue.poll();
+			AbstractElenaNode candidateNode = nodePriorityQueue.poll().wrappedNode;
 			explored.add(candidateNode);
 			
 			// Check if the shortest path from source to destination has been found
@@ -89,10 +102,11 @@ public class AstarRouter extends AbstractRouter{
 
 				for(AbstractElenaEdge edge : edges) {
 					AbstractElenaNode targetNode = edge.getDestinationNode();
+					NodeWrapper wrappedOutNode = new NodeWrapper(targetNode, nodeTentativeDistance.get(targetNode));
 					
-					if((!explored.contains(targetNode)) && (!nodePriorityQueue.contains(targetNode))) {
-						
-						nodePriorityQueue.add(targetNode);
+					if((!explored.contains(targetNode)) && (!nodePriorityQueue.contains(wrappedOutNode))) {
+							
+						nodePriorityQueue.add(wrappedOutNode);
 						
 						// g_score
 						float temp_g_score = this.node_Gscore.get(candidateNode) + edge.getEdgeDistance();					
@@ -106,9 +120,9 @@ public class AstarRouter extends AbstractRouter{
 						// f_score
 						float temp_f_score = temp_g_score + this.node_Hscore.get(targetNode);
 						
-						if (temp_f_score < targetNode.getDistanceWeight()) {
+						if (temp_f_score < nodeTentativeDistance.get(targetNode)) {
                     		this.node_Gscore.put(targetNode, temp_g_score);
-                    		targetNode.setDistanceWeight(temp_f_score);    
+                    		nodeTentativeDistance.put(targetNode, temp_f_score);    
                     		this.nodeAncestor.put(targetNode, candidateNode);
 						}
 					}              			        
@@ -122,22 +136,29 @@ public class AstarRouter extends AbstractRouter{
 	private void initializeGraph(AbstractElenaGraph graph, AbstractElenaNode from) {
 
 		// Iterate through each node in graph to initialize them
-		Collection<AbstractElenaNode> nodes = graph.getAllNodes();
-		for(AbstractElenaNode node : nodes) {
-			node.setDistanceWeight(Float.MAX_VALUE);
+		for(AbstractElenaNode node : graph.getAllNodes()) {
+			nodeTentativeDistance.put(node, Float.MAX_VALUE);
 		}
 
 		// Initialize source node
 		this.nodeAncestor.put(from, null);
 	}
 	
-	// Calculate distance from destination (H_score)
-	public float calculate_Hscore(AbstractElenaNode target, AbstractElenaNode dest) {
+	// Calculate distance from destination (H_score) using Haversine formula
+	public float calculate_Hscore(AbstractElenaNode target, AbstractElenaNode dest) {	    
 		double source_lat = Float.parseFloat(target.getLatitude());
 		double source_lon = Float.parseFloat(target.getLongitude());
 		double dest_lat = Float.parseFloat(dest.getLatitude());
-		double dest_lon = Float.parseFloat(dest.getLongitude());		
-		double h_score = Math.sqrt((dest_lat - source_lat) * (dest_lat - source_lat) + (dest_lon - source_lon) * (dest_lon - source_lon));
-		return (float)h_score;
+		double dest_lon = Float.parseFloat(dest.getLongitude());	
+		
+		double dist_lat = Math.toRadians(dest_lat - source_lat);
+	    double dist_lon = Math.toRadians(dest_lon - source_lon);
+	    source_lat = Math.toRadians(source_lat);
+	    dest_lat = Math.toRadians(dest_lat);
+	 
+	    double a = Math.pow(Math.sin(dist_lat / 2),2) + Math.pow(Math.sin(dist_lon / 2),2) * Math.cos(source_lat) * Math.cos(dest_lat);
+	    double c = 2 * Math.asin(Math.sqrt(a));
+	    double h_score = R * c;
+	    return (float)h_score;
 	}
 }
