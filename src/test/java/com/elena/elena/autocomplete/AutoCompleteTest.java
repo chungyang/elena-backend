@@ -21,11 +21,11 @@ public class AutoCompleteTest {
 
     @MockBean
     private AbstractElenaGraph mockGraph;
-    private List<String> locationNames = new ArrayList<>();
     private AutoCompleter autoCompleter;
 
     @Before
     public void setup(){
+        List<String> locationNames = new ArrayList<>();
         locationNames.add("new york");
         locationNames.add("new jersey");
         locationNames.add("newark");
@@ -36,7 +36,15 @@ public class AutoCompleteTest {
     }
     @Test
     public void testAutocomplete(){
-        Assert.assertEquals(2, autoCompleter.getNameSuggestions("new ").size());
+
+        int count = 0;
+        String input = "new ";
+        for(NameSuggestion suggestion : autoCompleter.getNameSuggestions(input)){
+            if(suggestion.getName().substring(0, 4).contains(input)){
+                count++;
+            }
+        }
+        Assert.assertEquals(2, count);
     }
 
 

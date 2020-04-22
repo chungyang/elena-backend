@@ -32,7 +32,6 @@ public class RouterTest {
 			// Create a Dijkstra router
 			dijkstra_router = RouterFactory.getRouter(Algorithm.DIJKSTRA);
 			// Create a Yen's router with Dijkstra base
-			Algorithm algorithm = Algorithm.DIJKSTRA_YEN;
 			yen_router = RouterFactory.getRouter( Algorithm.DIJKSTRA_YEN, 100);
 		}
 		catch(IOException ioException) {
