@@ -4,9 +4,7 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
 import com.elena.elena.util.ElenaUtils;
 import lombok.NonNull;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +25,6 @@ public class ElenaGraph extends AbstractElenaGraph{
     private Map<String, AbstractElenaNode> nodesByName;
     private Map<String, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
-    private int BATCH_PROCESS_NUMBER = 20;
     private final ElevationDao elevationDao;
 
 
@@ -77,7 +74,8 @@ public class ElenaGraph extends AbstractElenaGraph{
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
             data.put(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()), elenaNode);
 
-            if(data.size() == BATCH_PROCESS_NUMBER){
+            int batchNumber = 20;
+            if(data.size() == batchNumber){
                 for(ElevationData d : elevationDao.get(data.keySet())){
                     data.get(d).setElevationWeight(d.getElevation());
                 }
@@ -175,5 +173,163 @@ public class ElenaGraph extends AbstractElenaGraph{
     @Override
     public void cleanup() {
 //        this.executorService.shutdown();
+    }
+
+    private class ElenaEdge extends AbstractElenaEdge{
+        private final Edge tinkerEdge;
+        private final AbstractElenaGraph graph;
+        private  Map<String, String> properties;
+        private float edgeDistance;
+
+        private final String LENGTH__PROPERTY_KEY = "length";
+
+        public  ElenaEdge(AbstractElenaGraph graph, Edge tinkerEdge){
+            this.tinkerEdge = tinkerEdge;
+            this.graph = graph;
+            properties = new HashMap<>();
+            this.importProperties();
+            this.edgeDistance = Float.parseFloat((String) tinkerEdge.property(LENGTH__PROPERTY_KEY).value());
+        }
+
+        private void importProperties(){
+
+            Iterator<Property<String>> properties = tinkerEdge.properties();
+
+            while(properties.hasNext()){
+                Property<String> property = properties.next();
+                String key = property.key();
+                String value = property.value();
+                this.properties.put(key, value);
+            }
+        }
+
+        @Override
+        public String getId() {
+            return (String) tinkerEdge.id();
+        }
+
+        @Override
+        public float getEdgeDistance() {
+            return this.edgeDistance;
+        }
+
+        @Override
+        public void setEdgeDistance(float distance) {
+            this.edgeDistance = distance;
+        }
+
+        @Override
+        public float getEdgeElevation() {
+            return Math.max(0, this.getDestinationNode().getElevationWeight() - this.getOriginNode().getElevationWeight());
+        }
+
+        @Override
+        public AbstractElenaNode getOriginNode() {
+            String originNodeId = (String) tinkerEdge.outVertex().id();
+            return this.graph.getNode(originNodeId).get();
+        }
+
+        @Override
+        public AbstractElenaNode getDestinationNode() {
+            String destinationNodeId = (String) tinkerEdge.inVertex().id();
+            return this.graph.getNode(destinationNodeId).get();
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return this.properties;
+        }
+    }
+
+    private class ElenaNode extends AbstractElenaNode{
+
+        private final Vertex tinkerVertex;
+        private final AbstractElenaGraph graph;
+        private Map<AbstractElenaNode, AbstractElenaEdge> outgoingEdges = new HashMap();
+        private List<AbstractElenaEdge> incomingEdges = new ArrayList<>();
+        private List<AbstractElenaNode> neighbors = new ArrayList<>();
+
+        public ElenaNode(AbstractElenaGraph graph, Vertex tinkerVertex){
+
+            this.graph = graph;
+            this.tinkerVertex = tinkerVertex;
+        }
+
+        @Override
+        public String getId() {
+            return (String) tinkerVertex.id();
+        }
+
+
+        @Override
+        public Float getElevationWeight() {
+            return this.elevationWeight;
+        }
+
+        @Override
+        public Collection<AbstractElenaNode> getNeighbors() {
+
+            if(neighbors.isEmpty()) {
+                for (AbstractElenaEdge edge : this.getOutGoingEdges()) {
+                    neighbors.add(edge.getDestinationNode());
+                }
+            }
+            return neighbors;
+        }
+
+        @Override
+        public Collection<AbstractElenaEdge> getOutGoingEdges() {
+
+            if(outgoingEdges.isEmpty()) {
+                tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
+                    outgoingEdges.put(this.graph.getNode((String) edge.inVertex().id()).get(),
+                            this.graph.getEdge((String) edge.id()));
+                });
+            }
+            return outgoingEdges.values();
+        }
+
+        @Override
+        public Collection<AbstractElenaEdge> getInComingEdges() {
+
+            if(incomingEdges.isEmpty()) {
+                tinkerVertex.edges(Direction.IN).forEachRemaining(edge -> {
+                    incomingEdges.add(this.graph.getEdge((String) edge.id()));
+                });
+            }
+            return incomingEdges;
+        }
+
+        @Override
+        public String getLatitude() {
+            return this.tinkerVertex.property("y").value().toString();
+        }
+
+        @Override
+        public String getLongitude() {
+            return this.tinkerVertex.property("x").value().toString();
+        }
+
+        @Override
+        public Optional<AbstractElenaEdge> getEdge(AbstractElenaNode destinationNode) {
+            return Optional.ofNullable(outgoingEdges.getOrDefault(destinationNode, null));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+
+            if(o == this){
+                return true;
+            }
+            ElenaNode node = (ElenaNode) o;
+
+            return node.getId().equals(this.getId());
+        }
+
+        @Override
+        public int hashCode(){
+            return this.getId().hashCode();
+        }
+
     }
 }
