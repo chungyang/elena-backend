@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class AbstractRouter {
 
     /**
-     * This method should implement a routing algorithm and returns
+     * This method should implement a com.elena.elena.routing algorithm and returns
      * a list of paths
      */
     public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph);

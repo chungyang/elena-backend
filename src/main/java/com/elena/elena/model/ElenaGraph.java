@@ -10,10 +10,15 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
 
+@Component
+@Qualifier("sqliteDao")
 public class ElenaGraph extends AbstractElenaGraph{
 
     //Three hashmaps are probably redundant, but there is an indeterminate number
@@ -27,7 +32,8 @@ public class ElenaGraph extends AbstractElenaGraph{
     private int BATCH_PROCESS_NUMBER = 20;
     private final ElevationDao elevationDao;
 
-    public ElenaGraph(@NonNull String graphmlFileName, ElevationDao elevationDao) throws IOException {
+
+    public ElenaGraph(@NonNull String graphmlFileName, @NonNull  @Qualifier("sqliteDao") ElevationDao elevationDao) throws IOException {
 
         Graph graph = TinkerGraph.open();
         GraphMLReader reader = GraphMLReader.build().create();

@@ -3,6 +3,7 @@ package com.elena.elena.model;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Optional;

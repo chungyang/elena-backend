@@ -1,12 +1,11 @@
-package routing;
+package com.elena.elena.routing;
 
 import com.elena.elena.model.*;
 import com.elena.elena.dao.*;
-import com.elena.elena.routing.*;
-import com.elena.elena.util.*;
 
 import org.junit.Test;
 import org.junit.Before;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import java.io.IOException;

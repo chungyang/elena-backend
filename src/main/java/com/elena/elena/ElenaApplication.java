@@ -12,7 +12,10 @@ import javax.sql.DataSource;
 @SpringBootApplication
 public class ElenaApplication {
 
-	@Value("${sqlite.db}") String sqliteConnectionString;
+	@Value("${sqlite.db}") private String sqliteConnectionString;
+	@Value("${graphml.source.name}")  private String graphmlFileName;
+
+
 
 
 
@@ -29,6 +32,11 @@ public class ElenaApplication {
 		comboPooledDataSource.setMaxPoolSize(20);
 
 		return comboPooledDataSource;
+	}
+
+	@Bean
+	public String graphmlFileName(){
+		return graphmlFileName;
 	}
 
 }
