@@ -1,39 +1,22 @@
 package com.elena.elena.autocomplete;
 
-import com.elena.elena.autocomplete.AutoCompleter;
-import com.elena.elena.autocomplete.TrieAutoCompleter;
-import com.elena.elena.model.AbstractElenaGraph;
+import com.elena.elena.TestConfiguration;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfiguration.class)
 public class AutoCompleteTest {
 
-    @MockBean
-    private AbstractElenaGraph mockGraph;
-    private AutoCompleter autoCompleter;
 
-    @Before
-    public void setup(){
-        List<String> locationNames = new ArrayList<>();
-        locationNames.add("new york");
-        locationNames.add("new jersey");
-        locationNames.add("newark");
-        locationNames.add("boston");
-        locationNames.add("portland");
-        Mockito.when(mockGraph.getLocationNames()).thenReturn(locationNames);
-        autoCompleter = new TrieAutoCompleter(mockGraph);
-    }
+    @Autowired
+    private TrieAutoCompleter autoCompleter;
+
     @Test
     public void testAutocomplete(){
 
@@ -46,6 +29,5 @@ public class AutoCompleteTest {
         }
         Assert.assertEquals(2, count);
     }
-
 
 }
