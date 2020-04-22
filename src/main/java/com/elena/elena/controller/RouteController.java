@@ -2,7 +2,6 @@ package com.elena.elena.controller;
 
 import com.elena.elena.autocomplete.AutoCompleter;
 import com.elena.elena.autocomplete.NameSuggestions;
-import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.routing.AbstractRouter;
@@ -11,12 +10,8 @@ import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.RouterFactory;
 import com.elena.elena.util.ElenaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PreDestroy;
@@ -27,7 +22,6 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = {"https://elena-front.s3-website-us-east-1.amazonaws.com","http://localhost:3000"})
 public class RouteController {
-
 
     @Autowired
     private AbstractElenaGraph graph;

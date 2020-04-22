@@ -2,7 +2,6 @@ package com.elena.elena.model;
 
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
-import com.elena.elena.routing.DijkstraRouter;
 import com.elena.elena.util.ElenaUtils;
 import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -10,7 +9,6 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
