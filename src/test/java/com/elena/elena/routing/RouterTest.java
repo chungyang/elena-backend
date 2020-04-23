@@ -56,12 +56,4 @@ public class RouterTest {
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
-	
-	// Test Astar algorithm
-	@Test
-	public void astarTest() {
-		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-			Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
-		assertEquals(expected, actual);
-	}
 }
