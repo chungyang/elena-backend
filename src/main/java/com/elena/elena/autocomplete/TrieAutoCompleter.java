@@ -1,10 +1,13 @@
 package com.elena.elena.autocomplete;
 
 import com.elena.elena.model.AbstractElenaGraph;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class TrieAutoCompleter implements AutoCompleter{
 
     private AbstractElenaGraph graph;

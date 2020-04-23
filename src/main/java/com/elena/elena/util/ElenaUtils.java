@@ -66,5 +66,4 @@ public class ElenaUtils {
 
         return optionalURI;
     }
-
 }

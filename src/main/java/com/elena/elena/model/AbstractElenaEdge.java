@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public abstract class AbstractElenaEdge {
 
-
     public abstract String getId();
 
     public abstract float getEdgeDistance();

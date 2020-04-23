@@ -4,17 +4,13 @@ package com.elena.elena.model;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 
 public abstract class AbstractElenaNode {
 
-    /**
-     * The initial elevation is set to null, concrete implementation
-     * could populate it at creation
-     */
-    @Setter protected Float elevationWeight;
+
+    @Setter protected Float elevationWeight = 0f;
 
     public abstract String getId();
 

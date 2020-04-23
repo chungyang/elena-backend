@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
 @SpringBootApplication
 public class ElenaApplication {
 
-	@Value("${sqlite.db}") String sqliteConnectionString;
-
+	@Value("${graphml.source.name}")  private String graphmlFileName;
 
 
 	public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class ElenaApplication {
 	}
 
 	@Bean
-	public DataSource sqliteDataSource(){
+	public DataSource sqliteDataSource(@Value("${sqlite.db}") String sqliteConnectionString){
 		ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
 		comboPooledDataSource.setJdbcUrl(sqliteConnectionString);
 		comboPooledDataSource.setMinPoolSize(5);
@@ -29,6 +29,11 @@ public class ElenaApplication {
 		comboPooledDataSource.setMaxPoolSize(20);
 
 		return comboPooledDataSource;
+	}
+
+	@Bean
+	public String graphmlFileName(){
+		return graphmlFileName;
 	}
 
 }

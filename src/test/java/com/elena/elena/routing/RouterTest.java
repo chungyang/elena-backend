@@ -1,12 +1,19 @@
-package routing;
+package com.elena.elena.routing;
 
+import com.elena.elena.TestConfiguration;
 import com.elena.elena.model.*;
 import com.elena.elena.dao.*;
-import com.elena.elena.routing.*;
-import com.elena.elena.util.*;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import java.io.IOException;
@@ -14,34 +21,22 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfiguration.class)
 public class RouterTest {
-	
+
+	@Autowired
+	@Qualifier("simple.graphml")
 	private AbstractElenaGraph graph;
 	private AbstractRouter dijkstra_router;
 	private AbstractRouter yen_router;
-	private AbstractRouter astar_router;
 	
 	// Set up graph and router
 	@Before
 	public void setUp() {
-		try {
-			// Mock ElevationDao class
-			ElevationDao mockedElevationDao = mock(HttpDao.class);
-			List<ElevationData> emptyList = new ArrayList();
-			when(mockedElevationDao.get(any(Set.class))).thenReturn(emptyList);
-			// Create a graph with mocked ElevationDao
-			graph = new ElenaGraph("simple.graphml", mockedElevationDao);
-			// Create a Dijkstra router
-			dijkstra_router = RouterFactory.getRouter(Algorithm.DIJKSTRA);
-			// Create a Yen's router with Dijkstra base
-			Algorithm algorithm = Algorithm.DIJKSTRA_YEN;
-			yen_router = RouterFactory.getRouter( Algorithm.DIJKSTRA_YEN, 100);
-			// Create a Astar router
-			astar_router = RouterFactory.getRouter(Algorithm.A_STAR);
-		}
-		catch(IOException ioException) {
-			ioException.printStackTrace();
-		}
+		dijkstra_router = RouterFactory.getRouter(Algorithm.DIJKSTRA);
+		// Create a Yen's router with Dijkstra base
+		yen_router = RouterFactory.getRouter( Algorithm.DIJKSTRA_YEN, 100);
 	}
 	
 	// Test Dijkstra algorithm
@@ -66,5 +61,7 @@ public class RouterTest {
 	@Test
 	public void astarTest() {
 		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+			Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
+		assertEquals(expected, actual);
 	}
 }
