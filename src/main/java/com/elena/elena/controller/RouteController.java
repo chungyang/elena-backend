@@ -50,7 +50,6 @@ public class RouteController {
         System.out.println((float) (System.currentTimeMillis() - s) / 1000);
         ResponseEntity<String> responseEntity = new ResponseEntity<>(selectedPath.toString(), HttpStatus.OK);
 
-
         return responseEntity;
     }
 

@@ -1,14 +1,15 @@
 package com.elena.elena.model;
 
-import java.util.*;
-
 import com.elena.elena.routing.WeightType;
-import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ElenaPath extends AbstractElenaPath{
 
     private List<AbstractElenaEdge> edgesInPath;
-    private final String GEOMETRY_STRING_PREFIX = "LINESTRING ";
     private Map<WeightType, Float> pathWeights;
 
     public ElenaPath(){
@@ -46,26 +47,14 @@ public class ElenaPath extends AbstractElenaPath{
 
 
     @Override
-    @JsonValue
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{ \"values\": [");
 
-        for(AbstractElenaEdge edge : this.edgesInPath){
+            stringBuilder.append("{ \"values\": [");
 
-            String[] coordinates = edge.getProperties().getOrDefault("geometry", "")
-                    .substring(GEOMETRY_STRING_PREFIX.length()).replaceAll("[(),]", "").split(" ");
-
-            if(coordinates.length % 2 != 0){
-                throw new IllegalStateException("Parsed coordinates should be divisible by 2");
+            for(AbstractElenaEdge edge : this.edgesInPath){
+                stringBuilder.append(edge.toString());
             }
-
-            //Leaflet accepts (lat,lon) pairs instead of (lon,lat) so we need to change the order here
-            //since openstreetmap stores geometry in (lon,lat)
-            for(int i = 0; i < coordinates.length; i+=2){
-                stringBuilder.append("[").append(coordinates[i+1]).append(", ").append(coordinates[i]).append("],");
-            }
-        }
 
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).append("]}").toString();
     }

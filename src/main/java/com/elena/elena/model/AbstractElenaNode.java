@@ -4,7 +4,6 @@ package com.elena.elena.model;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 

@@ -175,7 +175,8 @@ public class ElenaGraph extends AbstractElenaGraph{
 //        this.executorService.shutdown();
     }
 
-    private class ElenaEdge extends AbstractElenaEdge{
+
+    private static class ElenaEdge extends AbstractElenaEdge{
         private final Edge tinkerEdge;
         private final AbstractElenaGraph graph;
         private  Map<String, String> properties;
@@ -239,9 +240,30 @@ public class ElenaGraph extends AbstractElenaGraph{
         public Map<String, String> getProperties() {
             return this.properties;
         }
+
+        @Override
+        public String toString(){
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            String[] coordinates = this.getProperties().getOrDefault("geometry", "")
+                    .substring("LINESTRING ".length()).replaceAll("[(),]", "").split(" ");
+
+            if(coordinates.length % 2 != 0){
+                throw new IllegalStateException("Parsed coordinates should be divisible by 2");
+            }
+
+            //Leaflet accepts (lat,lon) pairs instead of (lon,lat) so we need to change the order here
+            //since openstreetmap stores geometry in (lon,lat)
+            for(int i = 0; i < coordinates.length; i+=2){
+                stringBuilder.append("[").append(coordinates[i+1]).append(", ").append(coordinates[i]).append("],");
+            }
+
+            return stringBuilder.toString();
+        }
     }
 
-    private class ElenaNode extends AbstractElenaNode{
+    private static class ElenaNode extends AbstractElenaNode{
 
         private final Vertex tinkerVertex;
         private final AbstractElenaGraph graph;
