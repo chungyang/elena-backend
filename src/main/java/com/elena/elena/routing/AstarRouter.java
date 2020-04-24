@@ -8,22 +8,13 @@ import com.elena.elena.model.ElenaPath;
 import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 public class AstarRouter extends AbstractRouter{
 
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
 	private Map<AbstractElenaNode, Float> hScores; // Heuristic cost from a node to destination
-
 	// Constructor
 	public AstarRouter() {
 		this.nodeAncestor = new HashMap<>();
@@ -63,42 +54,46 @@ public class AstarRouter extends AbstractRouter{
 		});
 
 		nodePriorityQueue.add(new NodeWrapper(from, this.getFscore(from)));
-
-		// Initialize closed list
-//		Set<AbstractElenaNode> explored = new HashSet<>();
+		Set<AbstractElenaNode> visited = new HashSet<>();
 
 		while(!nodePriorityQueue.isEmpty()){
 			AbstractElenaNode candidateNode = nodePriorityQueue.poll().wrappedNode;
 
-			// Check if the shortest path from source to destination has been found
-			if(candidateNode == to) {
-				// Construct the path from the destination
-				AbstractElenaPath shortestPath = new ElenaPath();
-				AbstractElenaNode currentNode = candidateNode;
-				Optional<AbstractElenaEdge> currentEdge;
-				while(this.nodeAncestor.get(currentNode) != null) {
-					currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
-					shortestPath.addEdgeToPath(0, currentEdge.get());
-					currentNode = this.nodeAncestor.get(currentNode);
-				}
-				// Return the shortest path
-				shortestPaths.add(shortestPath);
-				return shortestPaths;
-			}
+			if(!visited.contains(candidateNode)) {
 
-			// Perform relaxation if the shortest path from source to destination hasn't been found
-			else {
-				Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
+				visited.add(candidateNode);
+				// Check if the shortest path from source to destination has been found
+				if (candidateNode == to) {
+					// Construct the path from the destination
+					AbstractElenaPath shortestPath = new ElenaPath();
+					AbstractElenaNode currentNode = candidateNode;
+					Optional<AbstractElenaEdge> currentEdge;
+					this.nodeAncestor.put(from, null);
 
-				for(AbstractElenaEdge edge : edges) {
-					AbstractElenaNode targetNode = edge.getDestinationNode();
-
-					if(this.gScores.get(targetNode) > edge.getEdgeDistance() + this.gScores.get(candidateNode)){
-						this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
-						nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode)));
-						this.nodeAncestor.put(targetNode, candidateNode);
+					while (this.nodeAncestor.get(currentNode) != null) {
+						currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
+						shortestPath.addEdgeToPath(0, currentEdge.get());
+						currentNode = this.nodeAncestor.get(currentNode);
 					}
+					// Return the shortest path
+					shortestPaths.add(shortestPath);
+					return shortestPaths;
+				}
 
+				// Perform relaxation if the shortest path from source to destination hasn't been found
+				else {
+					Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
+
+					for (AbstractElenaEdge edge : edges) {
+						AbstractElenaNode targetNode = edge.getDestinationNode();
+						if(!visited.contains(targetNode)) {
+							if (this.gScores.get(targetNode) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
+								this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
+								nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode)));
+								this.nodeAncestor.put(targetNode, candidateNode);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -120,8 +115,6 @@ public class AstarRouter extends AbstractRouter{
 			hScores.put(node, ElenaUtils.getDistance(nodeLat, nodeLon, destinationLat, destinationLon, Units.METRIC));
 		}
 
-		// Initialize source node
-		this.nodeAncestor.put(origin, null);
 	}
 
 	private float getFscore(AbstractElenaNode node){
