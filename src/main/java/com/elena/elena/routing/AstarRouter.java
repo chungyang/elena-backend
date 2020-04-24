@@ -14,12 +14,10 @@ public class AstarRouter extends AbstractRouter{
 
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
-	private Map<AbstractElenaNode, Float> hScores; // Heuristic cost from a node to destination
 	// Constructor
 	public AstarRouter() {
 		this.nodeAncestor = new HashMap<>();
 		this.gScores = new HashMap<>();
-		this.hScores = new HashMap<>();
 	}
 
 	private class NodeWrapper {
@@ -40,7 +38,7 @@ public class AstarRouter extends AbstractRouter{
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 
 		// Initialize graph
-		this.initializeGraph(graph, from, to);
+		this.initializeGraph(graph);
 		this.gScores.put(from, 0f);
 
 		// Initialize open list
@@ -53,11 +51,12 @@ public class AstarRouter extends AbstractRouter{
 				return 0;
 		});
 
-		nodePriorityQueue.add(new NodeWrapper(from, this.getFscore(from)));
+		nodePriorityQueue.add(new NodeWrapper(from, this.getFscore(from, to)));
 		Set<AbstractElenaNode> visited = new HashSet<>();
 
 		while(!nodePriorityQueue.isEmpty()){
 			AbstractElenaNode candidateNode = nodePriorityQueue.poll().wrappedNode;
+
 
 			if(!visited.contains(candidateNode)) {
 
@@ -89,7 +88,7 @@ public class AstarRouter extends AbstractRouter{
 						if(!visited.contains(targetNode)) {
 							if (this.gScores.get(targetNode) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
 								this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
-								nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode)));
+								nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode, to)));
 								this.nodeAncestor.put(targetNode, candidateNode);
 							}
 						}
@@ -102,22 +101,22 @@ public class AstarRouter extends AbstractRouter{
 		return shortestPaths;
 	}
 
-	private void initializeGraph(AbstractElenaGraph graph, AbstractElenaNode origin, AbstractElenaNode destination) {
-
-		float destinationLat = Float.parseFloat(destination.getLatitude());
-		float destinationLon = Float.parseFloat(destination.getLongitude());
+	private void initializeGraph(AbstractElenaGraph graph) {
 
 		// Iterate through each node in graph to initialize them
 		for(AbstractElenaNode node : graph.getAllNodes()) {
 			gScores.put(node, Float.MAX_VALUE);
-			float nodeLat = Float.parseFloat(node.getLatitude());
-			float nodeLon = Float.parseFloat(node.getLongitude());
-			hScores.put(node, ElenaUtils.getDistance(nodeLat, nodeLon, destinationLat, destinationLon, Units.METRIC));
 		}
 
 	}
 
-	private float getFscore(AbstractElenaNode node){
-		return this.gScores.get(node) + this.hScores.get(node);
+	private float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
+
+		float destinationLat = Float.parseFloat(destination.getLatitude());
+		float destinationLon = Float.parseFloat(destination.getLongitude());
+		float nodeLat = Float.parseFloat(origin.getLatitude());
+		float nodeLon = Float.parseFloat(origin.getLongitude());
+		float hscore = ElenaUtils.getDistance(nodeLat, nodeLon, destinationLat, destinationLon, Units.METRIC);
+		return this.gScores.get(origin) + hscore;
 	}
 }

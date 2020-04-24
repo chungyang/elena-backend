@@ -74,7 +74,7 @@ public class ElenaUtils {
      */
     public static float getDistance(float sourceLat, float sourceLon, float targetLat, float targetLon,  Units unit) {
 
-        final double R = 6371000; //Earth radius in km
+        final double R = 6371000; //Earth radius in meters
         sourceLat =  (float) Math.toRadians(sourceLat);
         sourceLon =  (float) Math.toRadians(sourceLon);
         targetLat =  (float) Math.toRadians(targetLat);
