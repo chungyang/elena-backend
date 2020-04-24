@@ -30,7 +30,7 @@ public class ElenaUtils {
 
             float pathDistance = path.getPathWeights().get(WeightType.DISTANCE);
 
-            if(pathDistance <= margin && compareElevation(selectedPath, path, mode)){
+            if(pathDistance <= margin && compareElevation(path, selectedPath, mode)){
                 selectedPath = path;
             }
         }
