@@ -102,7 +102,7 @@ public class DijkstraRouter extends AbstractRouter {
 		this.nodeAncestor.put(from, null);
 	}
 
-	public void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<NodeWrapper> nodePriorityQueue) {
+	private void relaxEdge(AbstractElenaNode in, AbstractElenaNode out, Float weight, PriorityQueue<NodeWrapper> nodePriorityQueue) {
 
 		// Check if we need to relax the distance for the out node
 		if(nodeTentativeDistance.get(out) > nodeTentativeDistance.get(in) + weight) {
@@ -114,6 +114,5 @@ public class DijkstraRouter extends AbstractRouter {
 			nodePriorityQueue.add(wrappedOutNode);
 		}
 	}
-
 
 }

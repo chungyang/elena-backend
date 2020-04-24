@@ -1,5 +1,6 @@
 package com.elena.elena.util;
 
+import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.routing.ElevationMode;
 import com.elena.elena.routing.WeightType;
@@ -66,4 +67,32 @@ public class ElenaUtils {
 
         return optionalURI;
     }
+
+    /**
+     * This method uses haversine formula to approximate a straight line distance between two nodes.
+     * Based on provided type of unit, it either returns distance in feet or meters.
+     */
+    public static float getDistance(float sourceLat, float sourceLon, float targetLat, float targetLon,  Units unit) {
+
+        final double R = 6371000; //Earth radius in km
+        sourceLat =  (float) Math.toRadians(sourceLat);
+        sourceLon =  (float) Math.toRadians(sourceLon);
+        targetLat =  (float) Math.toRadians(targetLat);
+        targetLon =  (float) Math.toRadians(targetLon);
+
+        float latDiff = targetLat - sourceLat;
+        float lonDiff = targetLon - sourceLon;
+
+        double a = Math.pow(Math.sin(latDiff / 2) , 2) + Math.pow(Math.sin(lonDiff / 2) , 2) * Math.cos(sourceLat) * Math.cos(targetLat);
+        double distance = 2 * R * Math.asin(Math.sqrt(a));
+
+        switch (unit){
+            case US:
+                return (float) (distance * 3.28084);
+
+            default:
+                return (float) distance;
+        }
+    }
+
 }

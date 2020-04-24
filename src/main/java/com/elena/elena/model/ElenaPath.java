@@ -1,6 +1,7 @@
 package com.elena.elena.model;
 
 import com.elena.elena.routing.WeightType;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,6 +48,7 @@ public class ElenaPath extends AbstractElenaPath{
 
 
     @Override
+    @JsonValue
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
 
