@@ -6,14 +6,11 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.ElenaGraph;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
