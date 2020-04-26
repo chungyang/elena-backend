@@ -4,10 +4,7 @@ import com.elena.elena.autocomplete.AutoCompleter;
 import com.elena.elena.autocomplete.NameSuggestions;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.AbstractElenaPath;
-import com.elena.elena.routing.AbstractRouter;
-import com.elena.elena.routing.Algorithm;
-import com.elena.elena.routing.ElevationMode;
-import com.elena.elena.routing.RouterFactory;
+import com.elena.elena.routing.*;
 import com.elena.elena.util.ElenaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +45,8 @@ public class RouteController {
         List<AbstractElenaPath> paths = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph);
         AbstractElenaPath selectedPath = ElenaUtils.selectPath(eleMode, paths, percentage);
         System.out.println((float) (System.currentTimeMillis() - s) / 1000);
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(selectedPath.toString(), HttpStatus.OK);
+        String response = this.aggregatePathInfo(paths.get(0), selectedPath);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
 
         return responseEntity;
     }
@@ -65,5 +63,20 @@ public class RouteController {
     @PreDestroy
     private void cleanup(){
         graph.cleanup();
+    }
+
+    private String aggregatePathInfo(AbstractElenaPath shortestpath, AbstractElenaPath selectedPath){
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("{ \"shortestpath\": ")
+                .append(shortestpath.toString())
+                .append(",")
+                .append(" \"selectedpath\": ")
+                .append(selectedPath.toString()).append("}");
+
+        String jsonResult = stringBuilder.toString();
+
+        return jsonResult;
     }
 }

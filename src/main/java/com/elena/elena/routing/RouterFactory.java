@@ -9,18 +9,12 @@ public class RouterFactory  {
 
         switch(algorithm){
 
-            case A_STAR:
-                return new AstarRouter();
-
-            case DIJKSTRA:
-                return new DijkstraRouter();
-
-            case A_STAR_YEN:
-                return new YenRouter(3, RouterFactory.getRouter(Algorithm.A_STAR));
+            case A_STAR_MULTIROUTES:
+                int numberOfRoutes = Math.max(20, percentage / 20);
+                return new MultiRoutesAstarRouter(numberOfRoutes);
 
             default:
-                return new YenRouter(3, RouterFactory.getRouter(Algorithm.DIJKSTRA));
-
+                return RouterFactory.getRouter(algorithm);
         }
     }
 
@@ -30,10 +24,16 @@ public class RouterFactory  {
         switch(algorithm){
 
             case A_STAR:
-                return new AstarRouter();
+                return new AstarRouter(null);
+
+            case DIJKSTRA:
+                return new DijkstraRouter();
+
+            case A_STAR_YEN:
+                return new YenRouter(10, RouterFactory.getRouter(Algorithm.A_STAR));
 
             default:
-                return new DijkstraRouter();
+                return new YenRouter(5, RouterFactory.getRouter(Algorithm.DIJKSTRA));
 
         }
     }

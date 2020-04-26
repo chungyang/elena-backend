@@ -52,12 +52,20 @@ public class ElenaPath extends AbstractElenaPath{
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.append("{ \"values\": [");
+        stringBuilder.append("{ \"values\": [");
 
-            for(AbstractElenaEdge edge : this.edgesInPath){
-                stringBuilder.append(edge.toString());
-            }
+        for(AbstractElenaEdge edge : this.edgesInPath){
+            stringBuilder.append(edge.toString());
+        }
 
-        return stringBuilder.deleteCharAt(stringBuilder.length() - 1).append("]}").toString();
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1).append("],");
+
+        stringBuilder.append("\"distance\":" + this.getPathWeights().get(WeightType.DISTANCE))
+        .append(",");
+
+        stringBuilder.append("\"elevation\":" + this.getPathWeights().get(WeightType.ELEVATION)).append("}");
+        String jsonResult = stringBuilder.toString();
+
+        return jsonResult;
     }
 }

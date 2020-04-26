@@ -12,8 +12,18 @@ import java.util.*;
 
 public class AstarRouter extends AbstractRouter{
 
-	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
+	private Optional<Set<AbstractElenaEdge>> excludedEdges;
+
+	protected AstarRouter(Set<AbstractElenaEdge> excludedEdges){
+
+		if(excludedEdges != null && !excludedEdges.isEmpty()) {
+			this.excludedEdges = Optional.of(excludedEdges);
+		}
+		else{
+			this.excludedEdges = Optional.empty();
+		}
+	}
 
 	private class NodeWrapper {
 
@@ -30,7 +40,7 @@ public class AstarRouter extends AbstractRouter{
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
 
-		this.nodeAncestor = new HashMap<>();
+		Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor = new HashMap<>();
 		this.gScores = new HashMap<>();
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
@@ -59,12 +69,12 @@ public class AstarRouter extends AbstractRouter{
 					AbstractElenaPath shortestPath = new ElenaPath();
 					AbstractElenaNode currentNode = candidateNode;
 					Optional<AbstractElenaEdge> currentEdge;
-					this.nodeAncestor.put(from, null);
+					nodeAncestor.put(from, null);
 
-					while (this.nodeAncestor.get(currentNode) != null) {
-						currentEdge = this.nodeAncestor.get(currentNode).getEdge(currentNode);
+					while (nodeAncestor.get(currentNode) != null) {
+						currentEdge = nodeAncestor.get(currentNode).getEdge(currentNode);
 						shortestPath.addEdgeToPath(0, currentEdge.get());
-						currentNode = this.nodeAncestor.get(currentNode);
+						currentNode = nodeAncestor.get(currentNode);
 					}
 					// Return the shortest path
 					shortestPaths.add(shortestPath);
@@ -76,13 +86,16 @@ public class AstarRouter extends AbstractRouter{
 					Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
 
 					for (AbstractElenaEdge edge : edges) {
-						AbstractElenaNode targetNode = edge.getDestinationNode();
+
+						if (excludedEdges.isEmpty() || !excludedEdges.get().contains(edge)) {
+							AbstractElenaNode targetNode = edge.getDestinationNode();
 							if (this.gScores.getOrDefault(targetNode, Float.MAX_VALUE) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
 								this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
 								nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode, to)));
-								this.nodeAncestor.put(targetNode, candidateNode);
+								nodeAncestor.put(targetNode, candidateNode);
 							}
 						}
+					}
 
 				}
 			}
@@ -90,14 +103,6 @@ public class AstarRouter extends AbstractRouter{
 
 		return shortestPaths;
 	}
-
-//	private void initializeGraph(AbstractElenaGraph graph) {
-//
-//		// Iterate through each node in graph to initialize them
-//		for(AbstractElenaNode node : graph.getAllNodes()) {
-//			gScores.put(node, Float.MAX_VALUE);
-//		}
-//	}
 
 	private float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
 
