@@ -1,25 +1,19 @@
 package com.elena.elena.routing;
 
 import com.elena.elena.TestConfiguration;
-import com.elena.elena.model.*;
-import com.elena.elena.dao.*;
-
-import org.junit.Test;
+import com.elena.elena.model.AbstractElenaGraph;
+import com.elena.elena.model.AbstractElenaPath;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import java.io.IOException;
-import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)

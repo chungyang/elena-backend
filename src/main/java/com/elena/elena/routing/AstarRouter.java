@@ -14,11 +14,6 @@ public class AstarRouter extends AbstractRouter{
 
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
-	// Constructor
-	public AstarRouter() {
-		this.nodeAncestor = new HashMap<>();
-		this.gScores = new HashMap<>();
-	}
 
 	private class NodeWrapper {
 
@@ -34,11 +29,13 @@ public class AstarRouter extends AbstractRouter{
 
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
+
+		this.nodeAncestor = new HashMap<>();
+		this.gScores = new HashMap<>();
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 
 		// Initialize graph
-		this.initializeGraph(graph);
 		this.gScores.put(from, 0f);
 
 		// Initialize open list
@@ -52,16 +49,11 @@ public class AstarRouter extends AbstractRouter{
 		});
 
 		nodePriorityQueue.add(new NodeWrapper(from, this.getFscore(from, to)));
-		Set<AbstractElenaNode> visited = new HashSet<>();
 
 		while(!nodePriorityQueue.isEmpty()){
 			AbstractElenaNode candidateNode = nodePriorityQueue.poll().wrappedNode;
 
-
-			if(!visited.contains(candidateNode)) {
-
-				visited.add(candidateNode);
-				// Check if the shortest path from source to destination has been found
+			// Check if the shortest path from source to destination has been found
 				if (candidateNode == to) {
 					// Construct the path from the destination
 					AbstractElenaPath shortestPath = new ElenaPath();
@@ -85,38 +77,30 @@ public class AstarRouter extends AbstractRouter{
 
 					for (AbstractElenaEdge edge : edges) {
 						AbstractElenaNode targetNode = edge.getDestinationNode();
-						if(!visited.contains(targetNode)) {
-							if (this.gScores.get(targetNode) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
+							if (this.gScores.getOrDefault(targetNode, Float.MAX_VALUE) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
 								this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
 								nodePriorityQueue.add(new NodeWrapper(targetNode, this.getFscore(targetNode, to)));
 								this.nodeAncestor.put(targetNode, candidateNode);
 							}
 						}
-					}
+
 				}
 			}
-		}
 
 
 		return shortestPaths;
 	}
 
-	private void initializeGraph(AbstractElenaGraph graph) {
-
-		// Iterate through each node in graph to initialize them
-		for(AbstractElenaNode node : graph.getAllNodes()) {
-			gScores.put(node, Float.MAX_VALUE);
-		}
-
-	}
+//	private void initializeGraph(AbstractElenaGraph graph) {
+//
+//		// Iterate through each node in graph to initialize them
+//		for(AbstractElenaNode node : graph.getAllNodes()) {
+//			gScores.put(node, Float.MAX_VALUE);
+//		}
+//	}
 
 	private float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
 
-		float destinationLat = Float.parseFloat(destination.getLatitude());
-		float destinationLon = Float.parseFloat(destination.getLongitude());
-		float nodeLat = Float.parseFloat(origin.getLatitude());
-		float nodeLon = Float.parseFloat(origin.getLongitude());
-		float hscore = ElenaUtils.getDistance(nodeLat, nodeLon, destinationLat, destinationLon, Units.METRIC);
-		return this.gScores.get(origin) + hscore;
+		return this.gScores.get(origin) + ElenaUtils.getDistance(origin, destination, Units.METRIC);
 	}
 }

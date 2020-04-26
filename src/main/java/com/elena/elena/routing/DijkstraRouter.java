@@ -19,12 +19,6 @@ public class DijkstraRouter extends AbstractRouter {
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> nodeTentativeDistance;
 
-	// Constructor
-	protected DijkstraRouter() {
-
-		this.nodeAncestor = new HashMap<>();
-		this.nodeTentativeDistance = new HashMap<>();
-	}
 	
 	private class NodeWrapper {
 		
@@ -41,6 +35,8 @@ public class DijkstraRouter extends AbstractRouter {
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
 
+		this.nodeAncestor = new HashMap<>();
+		this.nodeTentativeDistance = new HashMap<>();
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 		

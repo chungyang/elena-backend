@@ -95,4 +95,13 @@ public class ElenaUtils {
         }
     }
 
+    public static float getDistance(AbstractElenaNode source, AbstractElenaNode target, Units unit){
+        float targetLat = Float.parseFloat(target.getLatitude());
+        float targetLon = Float.parseFloat(target.getLongitude());
+        float sourceLat = Float.parseFloat(source.getLatitude());
+        float sourceLon = Float.parseFloat(source.getLongitude());
+
+        return getDistance(sourceLat, sourceLon, targetLat, targetLon, unit);
+    }
+
 }
