@@ -39,7 +39,7 @@ public class RouteController {
 
         Algorithm algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
         ElevationMode eleMode = ElevationMode.valueOf(elevationMode.toUpperCase());
-        AbstractRouter router = RouterFactory.getRouter(algorithm, percentage, eleMode);
+        AbstractRouter router = RouterFactory.getRouter(algorithm, percentage);
 
         if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
             //Throw an error response back

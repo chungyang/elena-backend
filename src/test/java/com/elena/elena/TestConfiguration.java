@@ -6,14 +6,11 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.ElenaGraph;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,32 +25,13 @@ public class TestConfiguration {
 
     @MockBean
     private ElevationDao mockDao;
-
+    private final String SIMPLE_GRAPHML = "simple.graphml";
 
     @Bean("simple.graphml")
     public AbstractElenaGraph simpleGraph() throws IOException {
 
-        Mockito.doReturn(new ArrayList<ElevationData>()).when(mockDao).get(any(Set.class));
-        return new ElenaGraph("simple.graphml", mockDao);
-    }
-
-    @Bean("simple.elevation.graphml")
-    public AbstractElenaGraph simpleElevationGraph() throws IOException {
-
-        List<ElevationData> elevationData = new ArrayList<>();
-        elevationData.add(new ElevationData("n0", 6));
-        elevationData.add(new ElevationData("n1", 4));
-        elevationData.add(new ElevationData("n2", 6));
-        elevationData.add(new ElevationData("n3", 1));
-        elevationData.add(new ElevationData("n4", 2));
-        elevationData.add(new ElevationData("n5", 6));
-        elevationData.add(new ElevationData("n6", 3));
-        elevationData.add(new ElevationData("n7", 6));
-        elevationData.add(new ElevationData("n8", 2));
-
-
-        Mockito.doReturn(elevationData).when(mockDao).get(any(Set.class));
-        return new ElenaGraph("simple_elevation.graphml", mockDao);
+        Mockito.when(mockDao.get(any(Set.class))).thenReturn(new ArrayList<ElevationData>());
+        return new ElenaGraph(SIMPLE_GRAPHML, mockDao);
     }
 
     @Bean

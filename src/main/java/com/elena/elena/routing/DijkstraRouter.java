@@ -19,17 +19,24 @@ public class DijkstraRouter extends AbstractRouter {
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> nodeTentativeDistance;
 
-	// Constructor
-	protected DijkstraRouter() {
-
-		this.nodeAncestor = new HashMap<>();
-		this.nodeTentativeDistance = new HashMap<>();
+	
+	private class NodeWrapper {
+		
+		AbstractElenaNode wrappedNode;
+		Float distanceWeight;
+		
+		// Constructor
+		public NodeWrapper(AbstractElenaNode node, Float distanceWeight) {
+			this.wrappedNode = node;
+			this.distanceWeight = distanceWeight;
+		}
 	}
-
 
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {
 
+		this.nodeAncestor = new HashMap<>();
+		this.nodeTentativeDistance = new HashMap<>();
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 		
@@ -37,7 +44,14 @@ public class DijkstraRouter extends AbstractRouter {
 		this.initializeGraph(graph, from);
 		
 		// Initialize min-priority queue
-		PriorityQueue<NodeWrapper> nodePriorityQueue = this.getMinNodePriorityQueue();
+		PriorityQueue<NodeWrapper> nodePriorityQueue = new PriorityQueue<>((n1 , n2) -> {
+			if(n1.distanceWeight > n2.distanceWeight)
+				return 1;
+			else if(n1.distanceWeight < n2.distanceWeight)
+				return -1;
+			else
+				return 0;
+		});
 
 		nodePriorityQueue.add(new NodeWrapper(from, nodeTentativeDistance.get(from)));
 
