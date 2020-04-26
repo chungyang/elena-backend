@@ -66,20 +66,20 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
-        Map<ElevationData, AbstractElenaNode> data = new HashMap<>();
+        Map<ElevationData, AbstractElenaNode> dataMap = new HashMap<>();
 
         while(vertices.hasNext()){
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            data.put(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()), elenaNode);
+            dataMap.put(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()), elenaNode);
 
             int batchNumber = 20;
-            if(data.size() == batchNumber){
-                for(ElevationData d : elevationDao.get(data.keySet())){
-                    data.get(d).setElevationWeight(d.getElevation());
+            if(dataMap.size() == batchNumber){
+                for(ElevationData d : elevationDao.get(dataMap.keySet())){
+                    dataMap.get(d).setElevationWeight(d.getElevation());
                 }
-                data.clear();
+                dataMap.clear();
             }
 
             this.nodesById.put(elenaNode.getId(), elenaNode);
@@ -87,9 +87,9 @@ public class ElenaGraph extends AbstractElenaGraph{
         }
 
         //Leftover processing
-        if(!data.isEmpty()) {
-            for (ElevationData d : elevationDao.get(data.keySet())) {
-                data.get(d).setElevationWeight(d.getElevation());
+        if(!dataMap.isEmpty()) {
+            for (ElevationData d : elevationDao.get(dataMap.keySet())) {
+                dataMap.get(d).setElevationWeight(d.getElevation());
             }
         }
     }

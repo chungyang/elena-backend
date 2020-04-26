@@ -6,6 +6,7 @@ import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 import com.elena.elena.dao.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -30,6 +31,10 @@ public class RouterTest {
 	@Autowired
 	@Qualifier("simple.graphml")
 	private AbstractElenaGraph graph;
+
+	@Autowired
+	@Qualifier("simple.elevation.graphml")
+	private AbstractElenaGraph elevationGraph;
 	private AbstractRouter dijkstra_router;
 	private AbstractRouter yen_router;
 	private AbstractRouter astar_router;
@@ -53,7 +58,7 @@ public class RouterTest {
 	@Test
 	public void dijkstraTest() {
 		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Float expected = (float) 3;
+		Float expected = 3f;
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
@@ -62,7 +67,7 @@ public class RouterTest {
 	@Test
 	public void yenTest() {
 		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Float expected = (float) 5;
+		Float expected = 5f;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 		System.out.println(actual);
@@ -85,4 +90,30 @@ public class RouterTest {
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
+
+	@Test
+	public void dijkstraMinElevationTest(){
+		List<AbstractElenaPath> minElevation = RouterFactory.getRouter(Algorithm.DIJKSTRA_ELEVATION,300,
+				ElevationMode.MIN).getRoute(elevationGraph.getNode("n0").get(), elevationGraph.getNode("n7").get(), elevationGraph);
+		Float expectedElevation = 0f;
+		Float actualElevation = minElevation.get(0).getPathWeights().get(WeightType.ELEVATION);
+		assertEquals(expectedElevation, actualElevation);
+
+		Float pathDistance = minElevation.get(0).getPathWeights().get(WeightType.DISTANCE);
+		Assert.assertTrue(pathDistance <= 7);
+	}
+
+	@Test
+	public void dijkstraMinElevationTest2(){
+		List<AbstractElenaPath> minElevation = RouterFactory.getRouter(Algorithm.DIJKSTRA_ELEVATION,100,
+				ElevationMode.MIN).getRoute(elevationGraph.getNode("n0").get(), elevationGraph.getNode("n7").get(), elevationGraph);
+		Float expectedElevation = 3f;
+		Float actualElevation = minElevation.get(0).getPathWeights().get(WeightType.ELEVATION);
+		assertEquals(expectedElevation, actualElevation);
+
+		Float pathDistance = minElevation.get(0).getPathWeights().get(WeightType.DISTANCE);
+		Assert.assertTrue(pathDistance <= 3);
+	}
+
+
 }
