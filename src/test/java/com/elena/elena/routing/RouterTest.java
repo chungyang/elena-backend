@@ -70,14 +70,13 @@ public class RouterTest {
 		Float expected = 5f;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
-		System.out.println(actual);
 	}
 	
 	// Test Astar algorithm
 	@Test
 	public void astarTest() {
 		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Float expected = (float) 3;
+		Float expected = 3f;
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
@@ -86,34 +85,8 @@ public class RouterTest {
 	@Test
 	public void yen_astar_router() {
 		List<AbstractElenaPath> shortestPaths = yen_astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
-		Float expected = (float) 5;
+		Float expected = 5f;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
-
-	@Test
-	public void dijkstraMinElevationTest(){
-		List<AbstractElenaPath> minElevation = RouterFactory.getRouter(Algorithm.DIJKSTRA_ELEVATION,300,
-				ElevationMode.MIN).getRoute(elevationGraph.getNode("n0").get(), elevationGraph.getNode("n7").get(), elevationGraph);
-		Float expectedElevation = 0f;
-		Float actualElevation = minElevation.get(0).getPathWeights().get(WeightType.ELEVATION);
-		assertEquals(expectedElevation, actualElevation);
-
-		Float pathDistance = minElevation.get(0).getPathWeights().get(WeightType.DISTANCE);
-		Assert.assertTrue(pathDistance <= 7);
-	}
-
-	@Test
-	public void dijkstraMinElevationTest2(){
-		List<AbstractElenaPath> minElevation = RouterFactory.getRouter(Algorithm.DIJKSTRA_ELEVATION,100,
-				ElevationMode.MIN).getRoute(elevationGraph.getNode("n0").get(), elevationGraph.getNode("n7").get(), elevationGraph);
-		Float expectedElevation = 3f;
-		Float actualElevation = minElevation.get(0).getPathWeights().get(WeightType.ELEVATION);
-		assertEquals(expectedElevation, actualElevation);
-
-		Float pathDistance = minElevation.get(0).getPathWeights().get(WeightType.DISTANCE);
-		Assert.assertTrue(pathDistance <= 3);
-	}
-
-
 }
