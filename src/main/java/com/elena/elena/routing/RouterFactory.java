@@ -10,8 +10,10 @@ public class RouterFactory  {
         switch(algorithm){
 
             case A_STAR_MULTIROUTES:
-                int numberOfRoutes = Math.max(20, percentage / 20);
-                return new MultiRoutesAstarRouter(numberOfRoutes);
+                if(percentage == 100){
+                    return new AstarRouter(null);
+                }
+                return new MultiRoutesAstarRouter(percentage);
 
             default:
                 return RouterFactory.getRouter(algorithm);

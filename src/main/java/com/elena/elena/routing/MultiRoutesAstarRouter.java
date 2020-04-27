@@ -6,21 +6,22 @@ import java.util.*;
 
 public class MultiRoutesAstarRouter extends AbstractRouter{
 
-    private int numOfRoute;
+    private int percentage;
 
-    protected MultiRoutesAstarRouter(int numOfRoute) {
-        this.numOfRoute = numOfRoute;
+    protected MultiRoutesAstarRouter(int percentage) {
+        this.percentage = percentage;
     }
 
     @Override
     public List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph) {
 
+        int numOfRoute = Math.min(20, 20 * percentage / 300);
         List<AbstractElenaPath> paths = new ArrayList<>();
         AbstractRouter router = new AstarRouter(null);
         AbstractElenaPath shortestPath = router.getRoute(originNode, destinationNode, graph).get(0);
         paths.add(shortestPath);
         Set<AbstractElenaEdge> excludedEdges = new HashSet<>();
-        populateExcludedEdges(shortestPath, excludedEdges, 20);
+        populateExcludedEdges(shortestPath, excludedEdges, this.getAllowedSize(this.percentage, shortestPath.getEdgesInPath().size()));
         router = new AstarRouter(excludedEdges);
         
         for(int i = 0; i < numOfRoute; i++){
@@ -28,8 +29,9 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
             if(path.isEmpty()){
                 break;
             }
-            paths.add(path.get(0));
-            populateExcludedEdges(path.get(0), excludedEdges, 20);
+            shortestPath = path.get(0);
+            paths.add(shortestPath);
+            populateExcludedEdges(path.get(0), excludedEdges, this.getAllowedSize(this.percentage, shortestPath.getEdgesInPath().size()));
         }
 
         return paths;
@@ -45,13 +47,18 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
      * @param allowedSize number of edges from the two ends (origin, destination) that are allowed
      */
     private void populateExcludedEdges(AbstractElenaPath path, Set<AbstractElenaEdge> excludedEdges, int allowedSize){
-        
-        if(allowedSize > (path.getEdgesInPath().size() - 2) / 2){
-            return;
-        }
 
         for(int i = allowedSize + 1; i < path.getEdgesInPath().size() - allowedSize - 1; i++){
             excludedEdges.add(path.getEdgesInPath().get(i));
         }
+    }
+
+
+    private int getAllowedSize(int percentage, int pathSize){
+
+        double maxExlucdedEdgeSize = pathSize - 2;
+        int r = (int) Math.max(0, Math.floor((pathSize - maxExlucdedEdgeSize / 300 * percentage) / 2 - 1));
+
+        return r;
     }
 }
