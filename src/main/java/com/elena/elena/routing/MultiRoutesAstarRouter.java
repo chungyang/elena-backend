@@ -15,23 +15,22 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
     @Override
     public List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph) {
 
-        int numOfRoute = Math.min(20, 20 * percentage / 300);
         List<AbstractElenaPath> paths = new ArrayList<>();
         AbstractRouter router = new AstarRouter(null);
         AbstractElenaPath shortestPath = router.getRoute(originNode, destinationNode, graph).get(0);
         paths.add(shortestPath);
         Set<AbstractElenaEdge> excludedEdges = new HashSet<>();
-        populateExcludedEdges(shortestPath, excludedEdges, this.getAllowedSize(this.percentage, shortestPath.getEdgesInPath().size()));
+        populateExcludedEdges(shortestPath, excludedEdges, this.getAllowedSize(shortestPath.getEdgesInPath().size()));
         router = new AstarRouter(excludedEdges);
         
-        for(int i = 0; i < numOfRoute; i++){
+        for(int i = 0; i < 20; i++){
             List<AbstractElenaPath> path = router.getRoute(originNode, destinationNode, graph);
             if(path.isEmpty()){
                 break;
             }
             shortestPath = path.get(0);
             paths.add(shortestPath);
-            populateExcludedEdges(path.get(0), excludedEdges, this.getAllowedSize(this.percentage, shortestPath.getEdgesInPath().size()));
+            populateExcludedEdges(path.get(0), excludedEdges, this.getAllowedSize(shortestPath.getEdgesInPath().size()));
         }
 
         return paths;
@@ -54,11 +53,9 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
     }
 
 
-    private int getAllowedSize(int percentage, int pathSize){
+    private int getAllowedSize(int pathSize){
 
         double maxExlucdedEdgeSize = pathSize - 2;
-        int r = (int) Math.max(0, Math.floor((pathSize - maxExlucdedEdgeSize / 300 * percentage) / 2 - 1));
-
-        return r;
+        return (int) Math.ceil(maxExlucdedEdgeSize * 0.15);
     }
 }
