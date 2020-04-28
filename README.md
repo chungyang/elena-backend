@@ -10,4 +10,4 @@ The script first package the source code with maven, builds a docker image and r
 
 `./performance.sh`
 
-Enter **localhost** for ip and **8080** for port for performance testing in local environment.
+Enter **localhost** for ip and **8080** for port for performance testing in local environment. Note: server needs to be running when the performance script is executed.
