@@ -52,7 +52,6 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
         }
     }
 
-
     private int getAllowedSize(int pathSize){
 
         double maxExlucdedEdgeSize = pathSize - 2;

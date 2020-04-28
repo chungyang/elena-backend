@@ -17,7 +17,6 @@ public class YenRouter extends AbstractRouter{
 	private AbstractRouter router;
 	private List<AbstractElenaPath> shortestPaths= new ArrayList<>();
 	private Map<AbstractElenaEdge, Float> restoreMap = new HashMap<>();
-
 	
 	// Constructor
 	protected YenRouter(int numOfRoute, AbstractRouter router) {

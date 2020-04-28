@@ -42,6 +42,7 @@ public class AstarRouter extends AbstractRouter{
 
 		Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor = new HashMap<>();
 		this.gScores = new HashMap<>();
+		
 		// Initialize list to record shortest path
 		List<AbstractElenaPath> shortestPaths = new ArrayList<>();
 
@@ -76,6 +77,7 @@ public class AstarRouter extends AbstractRouter{
 						shortestPath.addEdgeToPath(0, currentEdge.get());
 						currentNode = nodeAncestor.get(currentNode);
 					}
+
 					// Return the shortest path
 					shortestPaths.add(shortestPath);
 					return shortestPaths;
@@ -86,7 +88,6 @@ public class AstarRouter extends AbstractRouter{
 					Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
 
 					for (AbstractElenaEdge edge : edges) {
-
 						if (excludedEdges.isEmpty() || !excludedEdges.get().contains(edge)) {
 							AbstractElenaNode targetNode = edge.getDestinationNode();
 							if (this.gScores.getOrDefault(targetNode, Float.MAX_VALUE) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
@@ -96,10 +97,8 @@ public class AstarRouter extends AbstractRouter{
 							}
 						}
 					}
-
 				}
 			}
-
 
 		return shortestPaths;
 	}

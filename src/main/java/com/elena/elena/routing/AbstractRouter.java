@@ -1,6 +1,5 @@
 package com.elena.elena.routing;
 
-
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.model.AbstractElenaPath;
@@ -14,5 +13,4 @@ public abstract class AbstractRouter {
      * a list of paths
      */
     public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph);
-
 }
