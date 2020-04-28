@@ -3,7 +3,11 @@
 `./run.sh`
 
 
-The script first package the source code with maven, builds a docker image and runs the container. Please make sure port 8080 is avaiable.
+The script first package the source code with maven, builds a docker image and runs the container. Please make sure port 8080 is avaiable. **Note:** You need to have Docker installed and running.
+
+### To run using spring boot's maven plugin
+
+`mvn spring-boot:run -Dspring-boot.run.profiles=dev`
 
 
 ### To run perofmance script
