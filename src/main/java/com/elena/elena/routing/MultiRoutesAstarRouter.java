@@ -23,7 +23,7 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
         populateExcludedEdges(shortestPath, excludedEdges, this.getAllowedSize(shortestPath.getEdgesInPath().size()));
         router = new AstarRouter(excludedEdges);
         
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 10; i++){
             List<AbstractElenaPath> path = router.getRoute(originNode, destinationNode, graph);
             if(path.isEmpty()){
                 break;
