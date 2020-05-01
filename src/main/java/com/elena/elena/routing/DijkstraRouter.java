@@ -19,17 +19,7 @@ public class DijkstraRouter extends AbstractRouter {
 	private Map<AbstractElenaNode, AbstractElenaNode> nodeAncestor;
 	private Map<AbstractElenaNode, Float> nodeTentativeDistance;
 	
-	private class NodeWrapper {
-		
-		AbstractElenaNode wrappedNode;
-		Float distanceWeight;
-		
-		// Constructor
-		public NodeWrapper(AbstractElenaNode node, Float distanceWeight) {
-			this.wrappedNode = node;
-			this.distanceWeight = distanceWeight;
-		}
-	}
+
 
 	@Override
 	public List<AbstractElenaPath> getRoute(AbstractElenaNode from, AbstractElenaNode to, AbstractElenaGraph graph) {

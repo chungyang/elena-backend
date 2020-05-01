@@ -13,4 +13,16 @@ public abstract class AbstractRouter {
      * a list of paths
      */
     public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph);
+
+    protected class NodeWrapper {
+
+        AbstractElenaNode wrappedNode;
+        Float distanceWeight;
+
+        // Constructor
+        protected NodeWrapper(AbstractElenaNode node, Float distanceWeight) {
+            this.wrappedNode = node;
+            this.distanceWeight = distanceWeight;
+        }
+    }
 }

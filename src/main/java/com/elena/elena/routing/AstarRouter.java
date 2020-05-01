@@ -13,28 +13,11 @@ import java.util.*;
 public class AstarRouter extends AbstractRouter{
 
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
-	private Optional<Set<AbstractElenaEdge>> excludedEdges;
+	private Set<AbstractElenaEdge> excludedEdges;
 
 	protected AstarRouter(Set<AbstractElenaEdge> excludedEdges){
 
-		if(excludedEdges != null && !excludedEdges.isEmpty()) {
-			this.excludedEdges = Optional.of(excludedEdges);
-		}
-		else{
-			this.excludedEdges = Optional.empty();
-		}
-	}
-
-	private class NodeWrapper {
-
-		AbstractElenaNode wrappedNode;
-		Float distanceWeight;
-
-		// Constructor
-		public NodeWrapper(AbstractElenaNode node, Float distanceWeight) {
-			this.wrappedNode = node;
-			this.distanceWeight = distanceWeight;
-		}
+		this.excludedEdges = excludedEdges;
 	}
 
 	@Override
@@ -88,7 +71,7 @@ public class AstarRouter extends AbstractRouter{
 					Collection<AbstractElenaEdge> edges = candidateNode.getOutGoingEdges();
 
 					for (AbstractElenaEdge edge : edges) {
-						if (excludedEdges.isEmpty() || !excludedEdges.get().contains(edge)) {
+						if (excludedEdges == null || !excludedEdges.contains(edge)) {
 							AbstractElenaNode targetNode = edge.getDestinationNode();
 							if (this.gScores.getOrDefault(targetNode, Float.MAX_VALUE) > edge.getEdgeDistance() + this.gScores.get(candidateNode)) {
 								this.gScores.put(targetNode, edge.getEdgeDistance() + this.gScores.get(candidateNode));
