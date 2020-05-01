@@ -24,6 +24,7 @@ public class MultiRoutesAstarRouter extends AbstractRouter{
         router = new AstarRouter(excludedEdges);
 
         for(int i = 0; i < 20; i++){
+
             List<AbstractElenaPath> path = router.getRoute(originNode, destinationNode, graph);
             if(path.isEmpty()){
                 break;
