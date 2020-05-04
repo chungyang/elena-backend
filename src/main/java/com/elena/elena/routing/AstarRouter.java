@@ -15,8 +15,9 @@ public class AstarRouter extends AbstractRouter{
 	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
 	private Set<AbstractElenaEdge> excludedEdges;
 
-	protected AstarRouter(Set<AbstractElenaEdge> excludedEdges){
+	protected AstarRouter(){}
 
+	protected AstarRouter(Set<AbstractElenaEdge> excludedEdges){
 		this.excludedEdges = excludedEdges;
 	}
 
@@ -31,6 +32,7 @@ public class AstarRouter extends AbstractRouter{
 
 		// Initialize graph
 		this.gScores.put(from, 0f);
+
 
 		// Initialize open list
 		PriorityQueue<NodeWrapper> nodePriorityQueue = new PriorityQueue<>((n1 , n2) -> {
@@ -86,8 +88,9 @@ public class AstarRouter extends AbstractRouter{
 		return shortestPaths;
 	}
 
+
 	private float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
 
-		return this.gScores.get(origin) + ElenaUtils.getDistance(origin, destination, Units.METRIC);
+		return this.gScores.get(origin) + 0.97f * ElenaUtils.getDistance(origin, destination, Units.METRIC);
 	}
 }

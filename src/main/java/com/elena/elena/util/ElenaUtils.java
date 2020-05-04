@@ -75,13 +75,12 @@ public class ElenaUtils {
     public static float getDistance(float sourceLat, float sourceLon, float targetLat, float targetLon,  Units unit) {
 
         final double R = 6371000; //Earth radius in meters
-        sourceLat =  (float) Math.toRadians(sourceLat);
-        sourceLon =  (float) Math.toRadians(sourceLon);
-        targetLat =  (float) Math.toRadians(targetLat);
-        targetLon =  (float) Math.toRadians(targetLon);
 
-        float latDiff = targetLat - sourceLat;
-        float lonDiff = targetLon - sourceLon;
+        float latDiff = (float) Math.toRadians(targetLat - sourceLat);
+        float lonDiff = (float) Math.toRadians(targetLon - sourceLon);
+
+        sourceLat =  (float) Math.toRadians(sourceLat);
+        targetLat =  (float) Math.toRadians(targetLat);
 
         double a = Math.pow(Math.sin(latDiff / 2) , 2) + Math.pow(Math.sin(lonDiff / 2) , 2) * Math.cos(sourceLat) * Math.cos(targetLat);
         double distance = 2 * R * Math.asin(Math.sqrt(a));
@@ -104,4 +103,7 @@ public class ElenaUtils {
         return getDistance(sourceLat, sourceLon, targetLat, targetLon, unit);
     }
 
+    public static void main(String[] args){
+        System.out.println(getDistance(18.23921f, 19.94204f, 18.24012f, 19.94359f, Units.METRIC));
+    }
 }

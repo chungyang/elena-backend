@@ -49,7 +49,7 @@ public class RouterTest {
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
-	
+
 	// Test Yen's with Dijkstra algorithm
 	@Test
 	public void yenTest() {
@@ -58,7 +58,7 @@ public class RouterTest {
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
-	
+
 	// Test Astar algorithm
 	@Test
 	public void astarTest() {
@@ -67,7 +67,7 @@ public class RouterTest {
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
 	}
-	
+
 	// Test Yen's with Astar algorithm
 	@Test
 	public void yen_astar_router() {

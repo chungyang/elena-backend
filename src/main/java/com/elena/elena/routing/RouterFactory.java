@@ -14,20 +14,15 @@ public class RouterFactory  {
 
             case A_STAR_MULTIROUTES:
                 if(percentage == 100){
-                    return RouterFactory.getRouter(Algorithm.A_STAR);
+                    return new AstarRouter();
                 }
                 return new MultiRoutesAstarRouter(percentage);
 
             case A_STAR_YEN:
-                if(percentage == 100){
-                    return RouterFactory.getRouter(Algorithm.A_STAR);
-                }
+
                 return new YenRouter(10, RouterFactory.getRouter(Algorithm.A_STAR));
 
             case DIJKSTRA_YEN:
-                if(percentage == 100){
-                    return RouterFactory.getRouter(Algorithm.DIJKSTRA);
-                }
                 return new YenRouter(10, RouterFactory.getRouter(Algorithm.DIJKSTRA));
 
             default:
@@ -40,7 +35,7 @@ public class RouterFactory  {
         switch(algorithm){
 
             case A_STAR:
-                return new AstarRouter(null);
+                return new AstarRouter();
 
             default:
                 return new DijkstraRouter();

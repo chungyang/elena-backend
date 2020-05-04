@@ -15,9 +15,8 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.List;
 
-
 @RestController
-@CrossOrigin(origins = {"https://elena-front.s3-website-us-east-1.amazonaws.com","http://localhost:3000"})
+@CrossOrigin(origins = {"https://elena-front.s3.amazonaws.com","http://localhost:3000"})
 public class RouteController {
 
     @Autowired
