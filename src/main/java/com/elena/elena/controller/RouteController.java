@@ -66,16 +66,8 @@ public class RouteController {
 
     private String aggregatePathInfo(AbstractElenaPath shortestpath, AbstractElenaPath selectedPath){
 
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append("{ \"shortestpath\": ")
-                .append(shortestpath.toString())
-                .append(",")
-                .append(" \"selectedpath\": ")
-                .append(selectedPath.toString()).append("}");
-
-        String jsonResult = stringBuilder.toString();
-
-        return jsonResult;
+        return String.format("{ \"shortestpath\": %s, \"selectedpath\": %s }",
+                shortestpath.toString(),
+                selectedPath.toString());
     }
 }

@@ -258,10 +258,11 @@ public class ElenaGraph extends AbstractElenaGraph{
             //Leaflet accepts (lat,lon) pairs instead of (lon,lat) so we need to change the order here
             //since openstreetmap stores geometry in (lon,lat)
             for(int i = 0; i < coordinates.length; i+=2){
-                stringBuilder.append("[").append(coordinates[i+1]).append(", ").append(coordinates[i]).append("],");
+                String coordinate = String.format("[%s,%s]", coordinates[i+1], coordinates[i]);
+                stringBuilder.append(coordinate).append(",");
             }
 
-            return stringBuilder.toString();
+            return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
         }
     }
 

@@ -50,22 +50,16 @@ public class ElenaPath extends AbstractElenaPath{
     @Override
     @JsonValue
     public String toString(){
+
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("{ \"values\": [");
-
         for(AbstractElenaEdge edge : this.edgesInPath){
-            stringBuilder.append(edge.toString());
+            stringBuilder.append(edge.toString()).append(",");
         }
 
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1).append("],");
-
-        stringBuilder.append("\"distance\":" + this.getPathWeights().get(WeightType.DISTANCE))
-        .append(",");
-
-        stringBuilder.append("\"elevation\":" + this.getPathWeights().get(WeightType.ELEVATION)).append("}");
-        String jsonResult = stringBuilder.toString();
-
-        return jsonResult;
+        return  String.format("{ \"values\": [ %s ], \"distance\": %s, \"elevation\": %s}",
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString(),
+                this.getPathWeights().get(WeightType.DISTANCE),
+                this.getPathWeights().get(WeightType.ELEVATION));
     }
 }
