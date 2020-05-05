@@ -1,5 +1,6 @@
 package com.elena.elena.dao;
 
+import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,10 +27,11 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This implementation targets a third party host that allows operations
- * that's read-only, only {@link #get(Set, Units)} is implemented.
+ * that's read-only, only {@link #get(Map, Units)} is implemented.
  */
 @Component("httpDao")
 public class HttpDao implements ElevationDao{
@@ -48,22 +50,30 @@ public class HttpDao implements ElevationDao{
 
 
     @Override
-    public int insert(Set<ElevationData> elevationData) {
+    public int insert(Collection<AbstractElenaNode> nodes) {
         return 0;
     }
 
     @Override
-    public int delete(Set<ElevationData> elevationData) {
+    public int delete(Set<AbstractElenaNode> nodes) {
         return 0;
     }
 
     @Override
-    public Collection<ElevationData> get(Set<ElevationData> elevationData, Units unit) {
+    public int get(Map<Long, AbstractElenaNode> nodes, Units unit) {
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
+        AtomicInteger retrievedNumber = new AtomicInteger(0);
 
-        for(ElevationData data : elevationData){
-            tasks.add(()->httpGetElevation(data, httpClient, unit));
+        for(AbstractElenaNode node : nodes.values()){
+
+            tasks.add(()->
+            {
+                if(httpGetElevation(node, httpClient, unit)){
+                    retrievedNumber.incrementAndGet();
+                }
+                return true;
+            });
         }
 
         try {
@@ -72,18 +82,18 @@ public class HttpDao implements ElevationDao{
             e.printStackTrace();
         }
 
-        return elevationData;
+        return retrievedNumber.get();
     }
 
     @Override
-    public int update(Set<ElevationData> elevationData) {
+    public int update(Set<AbstractElenaNode> elevationData) {
         return 0;
     }
 
-    private boolean httpGetElevation(ElevationData data, CloseableHttpClient httpClient, Units unit){
+    private boolean httpGetElevation(AbstractElenaNode node, CloseableHttpClient httpClient, Units unit){
 
-        NameValuePair lat = new BasicNameValuePair("x", data.getLongitude());
-        NameValuePair lon = new BasicNameValuePair("y", data.getLatitude());
+        NameValuePair lat = new BasicNameValuePair("x", node.getLongitude());
+        NameValuePair lon = new BasicNameValuePair("y", node.getLatitude());
         NameValuePair units = new BasicNameValuePair("units", unit.getUnit());
         NameValuePair output = new BasicNameValuePair("output", "json");
         Optional<URI> optionalURI = ElenaUtils.getURL(ELEVATION_SOURCE_HOST, "", "http",
@@ -106,7 +116,7 @@ public class HttpDao implements ElevationDao{
                     throw new ClientProtocolException("Response contains no content");
                 }
                 elevation = parseJsonToElevation(entity.getContent());
-                data.setElevation(elevation);
+                node.setElevationWeight(elevation);
                 EntityUtils.consume(entity);
 
                 return true;

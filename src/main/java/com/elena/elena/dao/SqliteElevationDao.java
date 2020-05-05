@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Repository("sqliteDao")
@@ -31,12 +28,12 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public int insert(Set<ElevationData> elevationData) {
+    public int insert(Collection<AbstractElenaNode> nodes) {
 
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("INSERT INTO elevation (ID, ELEVATION) values ");
 
-        for(ElevationData data : elevationData){
+        for(AbstractElenaNode node : nodes){
             sqlBuilder.append("(")
                     .append(getParamSqlString(2))
                     .append(")")
@@ -46,60 +43,57 @@ public class SqliteElevationDao implements ElevationDao{
 
         return this.jdbcTemplate.update(sql, (ps)->{
             int index = 1;
-            for(ElevationData data : elevationData){
-                ps.setString(index, data.getId());
-                ps.setString(index + 1, String.valueOf(data.getElevation()));
+            for(AbstractElenaNode node : nodes){
+                ps.setLong(index, Long.valueOf(node.getId()));
+                ps.setFloat(index + 1, node.getElevationWeight());
                 index += 2;
             }
         });
     }
 
     @Override
-    public int delete(Set<ElevationData> elevationData) {
+    public int delete(Set<AbstractElenaNode> elevationData) {
         return 0;
     }
 
     @Override
-    public Collection<ElevationData> get(Set<ElevationData> elevationData, Units unit) {
+    public int get(Map<Long, AbstractElenaNode> nodes, Units unit) {
 
-        Set<String> ids = new HashSet<>();
-        for(ElevationData data : elevationData){
-            ids.add(data.getId());
-        }
+        String sql = "SELECT id, elevation FROM elevation WHERE id in (" + getParamSqlString(nodes.size()) + ")";
+        int totalRetrieved = 0;
 
-        String sql = "SELECT id, elevation FROM elevation WHERE id in (" + getParamSqlString(ids.size()) + ")";
-
-        List<ElevationData> retrievedData = this.jdbcTemplate.query(sql,
+        List<AbstractElenaNode> retrievedNodes = this.jdbcTemplate.query(sql,
                 (ps) -> {
                     int index = 1;
-                    for(String id : ids){
-                        ps.setString(index, id);
+                    for(long id : nodes.keySet()){
+                        ps.setLong(index, id);
                         index++;
                     }
                 },
-                (rs, rowNum) ->
-                new ElevationData(rs.getString("id"),
-                        Float.valueOf(rs.getString("elevation"))));
+                (rs, rowNum) -> {
+                    AbstractElenaNode node = nodes.get(rs.getLong("id"));
+                    node.setElevationWeight(rs.getFloat("elevation"));
+                    return node;
+                });
 
         //All data are available in database, no need to fetch it from external source
-        if(retrievedData.size() == elevationData.size()){
-            return retrievedData;
+        if(retrievedNodes.size() == nodes.size()){
+            return retrievedNodes.size();
         }
 
-        for(ElevationData data : retrievedData){
-            elevationData.remove(data);
+        totalRetrieved += retrievedNodes.size();
+        for(AbstractElenaNode node : retrievedNodes){
+            nodes.remove(node);
         }
 
-        Set<ElevationData> httpRetrievedData = new HashSet<>();
-        httpRetrievedData.addAll(this.httpDao.get(elevationData, unit));
-        this.insert(httpRetrievedData);
-        retrievedData.addAll(httpRetrievedData);
+        totalRetrieved += this.httpDao.get(nodes, unit);
+        this.insert(nodes.values());
 
-        return retrievedData;
+        return totalRetrieved;
     }
 
     @Override
-    public int update(Set<ElevationData> elevationData) {
+    public int update(Set<AbstractElenaNode> nodes) {
         return 0;
     }
 
@@ -111,14 +105,6 @@ public class SqliteElevationDao implements ElevationDao{
         }
 
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
-    }
-
-
-    private String getCoordinate(AbstractElenaNode node){
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(node.getLatitude()).append(",").append(node.getLongitude());
-        return stringBuilder.toString();
     }
 
 

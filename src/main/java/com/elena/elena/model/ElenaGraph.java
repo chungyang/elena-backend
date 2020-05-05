@@ -1,10 +1,10 @@
 package com.elena.elena.model;
 
 import com.elena.elena.dao.ElevationDao;
-import com.elena.elena.dao.ElevationData;
 import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 import lombok.NonNull;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 @Qualifier("sqliteDao")
@@ -67,21 +69,22 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
-        Map<ElevationData, AbstractElenaNode> data = new HashMap<>();
+        Map<Long, AbstractElenaNode> tmpMap = new HashMap<>();
         Units unit = Units.METRIC;
 
         while(vertices.hasNext()){
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            data.put(new ElevationData(elenaNode.getId(), elenaNode.getLatitude(), elenaNode.getLongitude()), elenaNode);
+            tmpMap.put(Long.valueOf(elenaNode.getId()), elenaNode);
 
-            int batchNumber = 20;
-            if(data.size() == batchNumber){
-                for(ElevationData d : elevationDao.get(data.keySet(),unit)){
-                    data.get(d).setElevationWeight(d.getElevation());
+            int batchNumber = 1000;
+            if(tmpMap.size() == batchNumber){
+                int retrievedNumber = elevationDao.get(tmpMap, unit);
+                if(retrievedNumber != batchNumber){
+                    throw new IllegalStateException("Some elevation data were not retrieved");
                 }
-                data.clear();
+                tmpMap.clear();
             }
 
             this.nodesById.put(elenaNode.getId(), elenaNode);
@@ -89,9 +92,10 @@ public class ElenaGraph extends AbstractElenaGraph{
         }
 
         //Leftover processing
-        if(!data.isEmpty()) {
-            for (ElevationData d : elevationDao.get(data.keySet(), unit)) {
-                data.get(d).setElevationWeight(d.getElevation());
+        if(!tmpMap.isEmpty()) {
+            int retrievedNumber = elevationDao.get(tmpMap, unit);
+            if(retrievedNumber != tmpMap.size()){
+                throw new IllegalStateException("Some elevation data were not retrieved");
             }
         }
     }
