@@ -12,7 +12,7 @@ import java.util.*;
 
 public class AstarRouter extends AbstractRouter{
 
-	private Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
+	protected Map<AbstractElenaNode, Float> gScores; // Distance between a node and origin
 	private Set<AbstractElenaEdge> excludedEdges;
 
 	protected AstarRouter(){}
@@ -89,7 +89,7 @@ public class AstarRouter extends AbstractRouter{
 	}
 
 
-	private float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
+	protected float getFscore(AbstractElenaNode origin, AbstractElenaNode destination){
 
 		return this.gScores.get(origin) + 0.97f * ElenaUtils.getDistance(origin, destination, Units.METRIC);
 	}

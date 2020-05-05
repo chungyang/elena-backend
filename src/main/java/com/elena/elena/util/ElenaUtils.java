@@ -103,7 +103,4 @@ public class ElenaUtils {
         return getDistance(sourceLat, sourceLon, targetLat, targetLon, unit);
     }
 
-    public static void main(String[] args){
-        System.out.println(getDistance(18.23921f, 19.94204f, 18.24012f, 19.94359f, Units.METRIC));
-    }
 }

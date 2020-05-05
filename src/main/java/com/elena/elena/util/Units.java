@@ -1,5 +1,15 @@
 package com.elena.elena.util;
 
 public enum Units {
-    US, METRIC
+    US("feet"), METRIC("meters");
+
+    private String unit;
+
+    Units(String unit){
+        this.unit = unit;
+    }
+
+    public String getUnit(){
+        return unit;
+    }
 }

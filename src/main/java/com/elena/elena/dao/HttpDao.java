@@ -1,6 +1,7 @@
 package com.elena.elena.dao;
 
 import com.elena.elena.util.ElenaUtils;
+import com.elena.elena.util.Units;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
@@ -28,7 +29,7 @@ import java.util.concurrent.Executors;
 
 /**
  * This implementation targets a third party host that allows operations
- * that's read-only, only {@link #get(Set)} is implemented.
+ * that's read-only, only {@link #get(Set, Units)} is implemented.
  */
 @Component("httpDao")
 public class HttpDao implements ElevationDao{
@@ -38,7 +39,7 @@ public class HttpDao implements ElevationDao{
     @Value("${usgs.elevation.host}") private String ELEVATION_SOURCE_HOST;
     private CloseableHttpClient httpClient = HttpClients.custom()
             .setConnectionManager(this.connectionManager).setConnectionManagerShared(true).build();
-    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private ExecutorService executorService = Executors.newFixedThreadPool(20);
 
     public HttpDao(){
         connectionManager.setMaxTotal(200);
@@ -57,12 +58,12 @@ public class HttpDao implements ElevationDao{
     }
 
     @Override
-    public Collection<ElevationData> get(Set<ElevationData> elevationData) {
+    public Collection<ElevationData> get(Set<ElevationData> elevationData, Units unit) {
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
 
         for(ElevationData data : elevationData){
-            tasks.add(()->httpGetElevation(data, httpClient));
+            tasks.add(()->httpGetElevation(data, httpClient, unit));
         }
 
         try {
@@ -79,11 +80,11 @@ public class HttpDao implements ElevationDao{
         return 0;
     }
 
-    private boolean httpGetElevation(ElevationData data, CloseableHttpClient httpClient){
+    private boolean httpGetElevation(ElevationData data, CloseableHttpClient httpClient, Units unit){
 
         NameValuePair lat = new BasicNameValuePair("x", data.getLongitude());
         NameValuePair lon = new BasicNameValuePair("y", data.getLatitude());
-        NameValuePair units = new BasicNameValuePair("units", "feet");
+        NameValuePair units = new BasicNameValuePair("units", unit.getUnit());
         NameValuePair output = new BasicNameValuePair("output", "json");
         Optional<URI> optionalURI = ElenaUtils.getURL(ELEVATION_SOURCE_HOST, "", "http",
                 lat, lon, units, output);

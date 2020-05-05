@@ -6,6 +6,7 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.ElenaGraph;
+import com.elena.elena.util.Units;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,7 @@ public class TestConfiguration {
     @Bean("simple.graphml")
     public AbstractElenaGraph simpleGraph() throws IOException {
 
-        Mockito.when(mockDao.get(any(Set.class))).thenReturn(new ArrayList<ElevationData>());
+        Mockito.when(mockDao.get(any(Set.class), Units.METRIC)).thenReturn(new ArrayList<ElevationData>());
         return new ElenaGraph(SIMPLE_GRAPHML, mockDao);
     }
 

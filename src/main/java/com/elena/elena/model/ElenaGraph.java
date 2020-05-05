@@ -3,6 +3,7 @@ package com.elena.elena.model;
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.dao.ElevationData;
 import com.elena.elena.util.ElenaUtils;
+import com.elena.elena.util.Units;
 import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
@@ -67,6 +68,7 @@ public class ElenaGraph extends AbstractElenaGraph{
 
         Iterator<Vertex> vertices = graph.vertices();
         Map<ElevationData, AbstractElenaNode> data = new HashMap<>();
+        Units unit = Units.METRIC;
 
         while(vertices.hasNext()){
 
@@ -76,7 +78,7 @@ public class ElenaGraph extends AbstractElenaGraph{
 
             int batchNumber = 20;
             if(data.size() == batchNumber){
-                for(ElevationData d : elevationDao.get(data.keySet())){
+                for(ElevationData d : elevationDao.get(data.keySet(),unit)){
                     data.get(d).setElevationWeight(d.getElevation());
                 }
                 data.clear();
@@ -88,7 +90,7 @@ public class ElenaGraph extends AbstractElenaGraph{
 
         //Leftover processing
         if(!data.isEmpty()) {
-            for (ElevationData d : elevationDao.get(data.keySet())) {
+            for (ElevationData d : elevationDao.get(data.keySet(), unit)) {
                 data.get(d).setElevationWeight(d.getElevation());
             }
         }

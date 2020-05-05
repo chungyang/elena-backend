@@ -2,6 +2,7 @@ package com.elena.elena.dao;
 
 
 import com.elena.elena.model.AbstractElenaNode;
+import com.elena.elena.util.Units;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -59,7 +60,7 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public Collection<ElevationData> get(Set<ElevationData> elevationData) {
+    public Collection<ElevationData> get(Set<ElevationData> elevationData, Units unit) {
 
         Set<String> ids = new HashSet<>();
         for(ElevationData data : elevationData){
@@ -90,7 +91,7 @@ public class SqliteElevationDao implements ElevationDao{
         }
 
         Set<ElevationData> httpRetrievedData = new HashSet<>();
-        httpRetrievedData.addAll(this.httpDao.get(elevationData));
+        httpRetrievedData.addAll(this.httpDao.get(elevationData, unit));
         this.insert(httpRetrievedData);
         retrievedData.addAll(httpRetrievedData);
 
