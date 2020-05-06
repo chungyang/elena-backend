@@ -45,7 +45,7 @@ public class HttpDao implements ElevationDao{
 
     public HttpDao(){
         connectionManager.setMaxTotal(200);
-        connectionManager.setDefaultMaxPerRoute(10);
+        connectionManager.setDefaultMaxPerRoute(20);
     }
 
 
@@ -64,7 +64,6 @@ public class HttpDao implements ElevationDao{
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
         AtomicInteger retrievedNumber = new AtomicInteger(0);
-
         for(AbstractElenaNode node : nodes.values()){
 
             tasks.add(()->
@@ -91,6 +90,7 @@ public class HttpDao implements ElevationDao{
     }
 
     private boolean httpGetElevation(AbstractElenaNode node, CloseableHttpClient httpClient, Units unit){
+
 
         NameValuePair lat = new BasicNameValuePair("x", node.getLongitude());
         NameValuePair lon = new BasicNameValuePair("y", node.getLatitude());

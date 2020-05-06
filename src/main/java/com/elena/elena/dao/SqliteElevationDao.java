@@ -3,6 +3,7 @@ package com.elena.elena.dao;
 
 import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.util.Units;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -59,9 +61,9 @@ public class SqliteElevationDao implements ElevationDao{
     @Override
     public int get(Map<Long, AbstractElenaNode> nodes, Units unit) {
 
+
         String sql = "SELECT id, elevation FROM elevation WHERE id in (" + getParamSqlString(nodes.size()) + ")";
         int totalRetrieved = 0;
-
         List<AbstractElenaNode> retrievedNodes = this.jdbcTemplate.query(sql,
                 (ps) -> {
                     int index = 1;
@@ -76,6 +78,7 @@ public class SqliteElevationDao implements ElevationDao{
                     return node;
                 });
 
+
         //All data are available in database, no need to fetch it from external source
         if(retrievedNodes.size() == nodes.size()){
             return retrievedNodes.size();
@@ -83,9 +86,8 @@ public class SqliteElevationDao implements ElevationDao{
 
         totalRetrieved += retrievedNodes.size();
         for(AbstractElenaNode node : retrievedNodes){
-            nodes.remove(node);
+            nodes.remove(Long.valueOf(node.getId()));
         }
-
         totalRetrieved += this.httpDao.get(nodes, unit);
         this.insert(nodes.values());
 

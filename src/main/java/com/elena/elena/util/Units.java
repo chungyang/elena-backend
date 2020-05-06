@@ -1,7 +1,7 @@
 package com.elena.elena.util;
 
 public enum Units {
-    US("feet"), METRIC("meters");
+    US("Feet"), METRIC("Meters");
 
     private String unit;
 

@@ -4,7 +4,6 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 import lombok.NonNull;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
@@ -29,6 +28,8 @@ public class ElenaGraph extends AbstractElenaGraph{
     private Map<String, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
     private final ElevationDao elevationDao;
+    private ExecutorService executorService = Executors.newFixedThreadPool(20);
+
 
 
     public ElenaGraph(@NonNull String graphmlFileName, @NonNull  @Qualifier("sqliteDao") ElevationDao elevationDao) throws IOException {
@@ -52,52 +53,58 @@ public class ElenaGraph extends AbstractElenaGraph{
      */
     private void importGraph(@NonNull Graph graph) {
 
-        try(this.elevationDao){
-            this.importNodes(graph);
-            this.importEdges(graph);
-            //Because a node lazily initializes its outgoing edges, the computation
-            //is done in downstream tasks and thus cause them to be slower. Doing
-            //initialization here improve performance.
-            for(AbstractElenaNode node : nodesById.values()){
-                node.getOutGoingEdges();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        this.importNodes(graph);
+        this.importEdges(graph);
+        //Because a node lazily initializes its outgoing edges, the computation
+        //is done in downstream tasks and thus cause them to be slower. Doing
+        //initialization here improve performance.
+        for(AbstractElenaNode node : nodesById.values()){
+            node.getOutGoingEdges();
         }
     }
 
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
-        Map<Long, AbstractElenaNode> tmpMap = new HashMap<>();
+        Map<Integer, Map<Long, AbstractElenaNode>> batchProcessMap = new HashMap<>();
+        int currentBatch = 1;
         Units unit = Units.METRIC;
 
         while(vertices.hasNext()){
 
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
-            tmpMap.put(Long.valueOf(elenaNode.getId()), elenaNode);
+            batchProcessMap.putIfAbsent(currentBatch, new HashMap<>());
+            batchProcessMap.get(currentBatch).put(Long.valueOf(elenaNode.getId()), elenaNode);
 
-            int batchNumber = 1000;
-            if(tmpMap.size() == batchNumber){
-                int retrievedNumber = elevationDao.get(tmpMap, unit);
-                if(retrievedNumber != batchNumber){
-                    throw new IllegalStateException("Some elevation data were not retrieved");
-                }
-                tmpMap.clear();
+            int batchNumber = 100;
+            if(batchProcessMap.get(currentBatch).size() == batchNumber){
+
+                final int executingBatchNumber = currentBatch;
+                this.executorService.submit(()->{
+                    int retrievedNumber = elevationDao.get(batchProcessMap.get(executingBatchNumber), unit);
+                    if(retrievedNumber != batchNumber){
+                        throw new IllegalStateException("Some elevation data were not retrieved");
+                    }
+                    batchProcessMap.remove(executingBatchNumber);
+                });
+                currentBatch++;
             }
+
 
             this.nodesById.put(elenaNode.getId(), elenaNode);
             this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
         }
 
         //Leftover processing
-        if(!tmpMap.isEmpty()) {
-            int retrievedNumber = elevationDao.get(tmpMap, unit);
-            if(retrievedNumber != tmpMap.size()){
+        Map<Long, AbstractElenaNode> m = batchProcessMap.get(currentBatch);
+        if(!batchProcessMap.get(currentBatch).isEmpty()) {
+            int retrievedNumber = elevationDao.get(batchProcessMap.get(currentBatch), unit);
+            if(retrievedNumber != batchProcessMap.get(currentBatch).size()){
                 throw new IllegalStateException("Some elevation data were not retrieved");
             }
         }
+        executorService.shutdown();
     }
 
     private void importEdges(@NonNull Graph graph){
@@ -178,7 +185,12 @@ public class ElenaGraph extends AbstractElenaGraph{
 
     @Override
     public void cleanup() {
-//        this.executorService.shutdown();
+        try {
+            this.elevationDao.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
