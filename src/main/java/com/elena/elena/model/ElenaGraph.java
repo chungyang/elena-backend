@@ -4,6 +4,7 @@ import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.util.ElenaUtils;
 import com.elena.elena.util.Units;
 import lombok.NonNull;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLReader;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
@@ -164,7 +165,7 @@ public class ElenaGraph extends AbstractElenaGraph{
         id = id.toLowerCase();
         AbstractElenaNode node;
 
-        if(this.nodesById.containsKey(id)){
+        if(NumberUtils.isNumber(id) && this.nodesById.containsKey(id)){
             node =  this.nodesById.get(id);
         }
         else if(this.nodesByCoordinate.containsKey(id)){

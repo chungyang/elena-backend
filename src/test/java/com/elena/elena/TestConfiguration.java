@@ -4,6 +4,7 @@ import com.elena.elena.autocomplete.AutoCompleter;
 import com.elena.elena.autocomplete.TrieAutoCompleter;
 import com.elena.elena.dao.ElevationDao;
 import com.elena.elena.model.AbstractElenaGraph;
+import com.elena.elena.model.AbstractElenaNode;
 import com.elena.elena.model.ElenaGraph;
 import com.elena.elena.util.Units;
 import org.mockito.Mockito;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @Configuration
 public class TestConfiguration {
@@ -28,8 +30,7 @@ public class TestConfiguration {
 
     @Bean("simple.graphml")
     public AbstractElenaGraph simpleGraph() throws IOException {
-
-        Mockito.when(mockDao.get(any(Map.class), Units.METRIC)).thenReturn(0);
+        Mockito.when(mockDao.get(any(Map.class), eq(Units.METRIC))).thenReturn(6);
         return new ElenaGraph(SIMPLE_GRAPHML, mockDao);
     }
 
