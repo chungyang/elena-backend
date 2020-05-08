@@ -38,7 +38,7 @@ public class RouteController {
         AbstractRouter router = RouterFactory.getRouter(algorithm, percentage);
 
         if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
-            //Throw an error response back
+            new ResponseEntity<String>("Can't find " + from + " or " + to, HttpStatus.BAD_REQUEST);
         }
         long s = System.currentTimeMillis();
         List<AbstractElenaPath> paths = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph);

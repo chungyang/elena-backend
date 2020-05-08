@@ -60,7 +60,7 @@ public class HttpDao implements ElevationDao{
     }
 
     @Override
-    public int get(Map<Long, AbstractElenaNode> nodes, Units unit) {
+    public int get(Map<String, AbstractElenaNode> nodes, Units unit) {
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
         AtomicInteger retrievedNumber = new AtomicInteger(0);

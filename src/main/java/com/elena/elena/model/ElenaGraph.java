@@ -67,7 +67,7 @@ public class ElenaGraph extends AbstractElenaGraph{
     private void importNodes(@NonNull Graph graph){
 
         Iterator<Vertex> vertices = graph.vertices();
-        Map<Integer, Map<Long, AbstractElenaNode>> batchProcessMap = new HashMap<>();
+        Map<Integer, Map<String, AbstractElenaNode>> batchProcessMap = new HashMap<>();
         int currentBatch = 1;
         Units unit = Units.METRIC;
 
@@ -76,7 +76,7 @@ public class ElenaGraph extends AbstractElenaGraph{
             Vertex vertex = vertices.next();
             AbstractElenaNode elenaNode = new ElenaNode(this, vertex);
             batchProcessMap.putIfAbsent(currentBatch, new HashMap<>());
-            batchProcessMap.get(currentBatch).put(Long.valueOf(elenaNode.getId()), elenaNode);
+            batchProcessMap.get(currentBatch).put(elenaNode.getId(), elenaNode);
 
             int batchNumber = 100;
             if(batchProcessMap.get(currentBatch).size() == batchNumber){
@@ -98,7 +98,7 @@ public class ElenaGraph extends AbstractElenaGraph{
         }
 
         //Leftover processing
-        Map<Long, AbstractElenaNode> m = batchProcessMap.get(currentBatch);
+        Map<String, AbstractElenaNode> m = batchProcessMap.get(currentBatch);
         if(!batchProcessMap.get(currentBatch).isEmpty()) {
             int retrievedNumber = elevationDao.get(batchProcessMap.get(currentBatch), unit);
             if(retrievedNumber != batchProcessMap.get(currentBatch).size()){
@@ -165,7 +165,7 @@ public class ElenaGraph extends AbstractElenaGraph{
         id = id.toLowerCase();
         AbstractElenaNode node;
 
-        if(NumberUtils.isNumber(id) && this.nodesById.containsKey(id)){
+        if(this.nodesById.containsKey(id)){
             node =  this.nodesById.get(id);
         }
         else if(this.nodesByCoordinate.containsKey(id)){
