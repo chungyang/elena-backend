@@ -59,21 +59,25 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public int get(Map<String, AbstractElenaNode> nodes, Units unit) {
+    public int get(Collection<AbstractElenaNode> nodes, Units unit) {
 
 
+        Map<String, AbstractElenaNode> nodeMap = new HashMap<>();
+        for(AbstractElenaNode node : nodes){
+            nodeMap.put(node.getId(), node);
+        }
         String sql = "SELECT id, elevation FROM elevation WHERE id in (" + getParamSqlString(nodes.size()) + ")";
         int totalRetrieved = 0;
         List<AbstractElenaNode> retrievedNodes = this.jdbcTemplate.query(sql,
                 (ps) -> {
                     int index = 1;
-                    for(String id : nodes.keySet()){
-                        ps.setLong(index, Long.parseLong(id));
+                    for(AbstractElenaNode node : nodes){
+                        ps.setLong(index, Long.parseLong(node.getId()));
                         index++;
                     }
                 },
                 (rs, rowNum) -> {
-                    AbstractElenaNode node = nodes.get(rs.getString("id"));
+                    AbstractElenaNode node = nodeMap.get(rs.getString("id"));
                     node.setElevationWeight(rs.getFloat("elevation"));
                     return node;
                 });
@@ -86,16 +90,16 @@ public class SqliteElevationDao implements ElevationDao{
 
         totalRetrieved += retrievedNodes.size();
         for(AbstractElenaNode node : retrievedNodes){
-            nodes.remove(node.getId());
+            nodeMap.remove(node.getId());
         }
-        totalRetrieved += this.httpDao.get(nodes, unit);
-        this.insert(nodes.values());
+        totalRetrieved += this.httpDao.get(nodeMap.values(), unit);
+        this.insert(nodeMap.values());
 
         return totalRetrieved;
     }
 
     @Override
-    public int update(Set<AbstractElenaNode> nodes) {
+    public int update(Collection<AbstractElenaNode> nodes) {
         return 0;
     }
 

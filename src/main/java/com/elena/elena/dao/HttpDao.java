@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This implementation targets a third party host that allows operations
- * that's read-only, only {@link #get(Map, Units)} is implemented.
+ * that's read-only, only {@link #get(Collection, Units)} is implemented.
  */
 @Component("httpDao")
 public class HttpDao implements ElevationDao{
@@ -60,11 +60,11 @@ public class HttpDao implements ElevationDao{
     }
 
     @Override
-    public int get(Map<String, AbstractElenaNode> nodes, Units unit) {
+    public int get(Collection<AbstractElenaNode> nodes, Units unit) {
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
         AtomicInteger retrievedNumber = new AtomicInteger(0);
-        for(AbstractElenaNode node : nodes.values()){
+        for(AbstractElenaNode node : nodes){
 
             tasks.add(()->
             {
@@ -85,7 +85,7 @@ public class HttpDao implements ElevationDao{
     }
 
     @Override
-    public int update(Set<AbstractElenaNode> elevationData) {
+    public int update(Collection<AbstractElenaNode> elevationData) {
         return 0;
     }
 

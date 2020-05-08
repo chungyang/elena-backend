@@ -14,7 +14,7 @@ public interface ElevationDao extends Closeable {
 
     int delete(Set<AbstractElenaNode> nodes);
 
-    int get(Map<String, AbstractElenaNode> nodes, Units unit);
+    int get(Collection<AbstractElenaNode> nodes, Units unit);
 
-    int update(Set<AbstractElenaNode> nodes);
+    int update(Collection<AbstractElenaNode> nodes);
 }

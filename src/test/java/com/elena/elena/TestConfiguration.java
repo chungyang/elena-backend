@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class TestConfiguration {
 
     @Bean("simple.graphml")
     public AbstractElenaGraph simpleGraph() throws IOException {
-        Mockito.when(mockDao.get(any(Map.class), eq(Units.METRIC))).thenReturn(6);
+        Mockito.when(mockDao.get(any(Collection.class), eq(Units.METRIC))).thenReturn(6);
         return new ElenaGraph(SIMPLE_GRAPHML, mockDao);
     }
 
