@@ -2,6 +2,7 @@ package com.elena.elena.model;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +25,7 @@ public abstract class AbstractElenaEdge {
 
     public abstract Map<String, String> getProperties();
 
-    public List<AbstractElenaNode> getNodes(){
-        List<AbstractElenaNode> nodes = new ArrayList<>();
-        nodes.add(this.getOriginNode());
-        nodes.add(this.getDestinationNode());
-        return nodes;
-    }
+    public abstract Collection<Coordinate> getCoordinates();
+
 
 }

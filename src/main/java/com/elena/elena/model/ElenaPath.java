@@ -54,7 +54,9 @@ public class ElenaPath extends AbstractElenaPath{
         StringBuilder stringBuilder = new StringBuilder();
 
         for(AbstractElenaEdge edge : this.edgesInPath){
-            stringBuilder.append(edge.toString()).append(",");
+            for(Coordinate coordinate : edge.getCoordinates()){
+                stringBuilder.append(coordinate.toString()).append(",");
+            }
         }
 
         return  String.format("{ \"values\": [ %s ], \"distance\": %s, \"elevation\": %s}",

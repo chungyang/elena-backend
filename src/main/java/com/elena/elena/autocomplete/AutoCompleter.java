@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface AutoCompleter {
 
-    Collection<NameSuggestion> getNameSuggestions(String initialName);
+    Collection<String> getNameSuggestions(String initialName);
 
 }

@@ -1,7 +1,6 @@
 package com.elena.elena.controller;
 
 import com.elena.elena.autocomplete.AutoCompleter;
-import com.elena.elena.autocomplete.NameSuggestions;
 import com.elena.elena.model.AbstractElenaGraph;
 import com.elena.elena.model.AbstractElenaPath;
 import com.elena.elena.routing.*;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -51,10 +51,10 @@ public class RouteController {
     }
 
     @RequestMapping(method= RequestMethod.GET, value="autocomplete")
-    public ResponseEntity<NameSuggestions> getAutocompleteList(@RequestParam("name") String name) {
+    public ResponseEntity<Collection<String>> getAutocompleteList(@RequestParam("name") String name) {
 
-        NameSuggestions suggestions = new NameSuggestions(autoCompleter.getNameSuggestions(name));
-        ResponseEntity<NameSuggestions> responseEntity = new ResponseEntity<>(suggestions, HttpStatus.OK);
+        Collection<String> suggestions = autoCompleter.getNameSuggestions(name);
+        ResponseEntity<Collection<String>> responseEntity = new ResponseEntity<>(suggestions, HttpStatus.OK);
 
         return responseEntity;
     }

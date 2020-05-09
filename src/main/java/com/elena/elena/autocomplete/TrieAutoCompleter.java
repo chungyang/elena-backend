@@ -23,10 +23,10 @@ public class TrieAutoCompleter implements AutoCompleter{
     }
 
     @Override
-    public Collection<NameSuggestion> getNameSuggestions(String initialName) {
+    public Collection<String> getNameSuggestions(String initialName) {
 
         Trie current = root;
-        List<NameSuggestion> suggestions = new ArrayList<>();
+        List<String> suggestions = new ArrayList<>();
 
         for(Character character : initialName.toLowerCase().toCharArray()){
             if(current.nextTries.containsKey(character)) {
@@ -46,7 +46,7 @@ public class TrieAutoCompleter implements AutoCompleter{
      * Given a Trie and a collection, this method recursively adds
      * all words in the Trie
      */
-    private void addWords(Collection<NameSuggestion> suggestions, Trie trie){
+    private void addWords(Collection<String> suggestions, Trie trie){
 
         if(trie.nextTries.isEmpty()){
             return;
@@ -56,8 +56,7 @@ public class TrieAutoCompleter implements AutoCompleter{
             if(nextTrie.isWord){
                 String name = nextTrie.characters.stream().map(String::valueOf)
                         .collect(Collectors.joining());
-                NameSuggestion nameSuggestion = new NameSuggestion(name);
-                suggestions.add(nameSuggestion);
+                suggestions.add(name);
             }
             addWords(suggestions, nextTrie);
         }

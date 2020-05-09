@@ -21,8 +21,8 @@ public class AutoCompleteTest {
 
         int count = 0;
         String input = "new ";
-        for(NameSuggestion suggestion : autoCompleter.getNameSuggestions(input)){
-            if(suggestion.getName().substring(0, 4).contains(input)){
+        for(String suggestion : autoCompleter.getNameSuggestions(input)){
+            if(suggestion.substring(0, 4).contains(input)){
                 count++;
             }
         }

@@ -260,26 +260,24 @@ public class ElenaGraph extends AbstractElenaGraph{
         }
 
         @Override
-        public String toString(){
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            String[] coordinates = this.getProperties().getOrDefault("geometry", "")
+        public Collection<Coordinate> getCoordinates() {
+            String[] coordinateString = this.getProperties().getOrDefault("geometry", "")
                     .substring("LINESTRING ".length()).replaceAll("[(),]", "").split(" ");
+            List<Coordinate> coordinates = new ArrayList<>();
 
-            if(coordinates.length % 2 != 0){
+            if(coordinateString.length % 2 != 0){
                 throw new IllegalStateException("Parsed coordinates should be divisible by 2");
             }
 
             //Leaflet accepts (lat,lon) pairs instead of (lon,lat) so we need to change the order here
             //since openstreetmap stores geometry in (lon,lat)
-            for(int i = 0; i < coordinates.length; i+=2){
-                String coordinate = String.format("[%s,%s]", coordinates[i+1], coordinates[i]);
-                stringBuilder.append(coordinate).append(",");
+            for(int i = 0; i < coordinateString.length; i+=2){
+                coordinates.add(new Coordinate(Float.parseFloat(coordinateString[i+1]), Float.parseFloat(coordinateString[i])));
             }
 
-            return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
+            return coordinates;
         }
+
     }
 
     private static class ElenaNode extends AbstractElenaNode{
