@@ -17,7 +17,11 @@ public abstract class AbstractElenaGraph{
 
     public abstract Collection<String> getLocationNames();
 
-    public abstract Optional<AbstractElenaNode> getNode(@NonNull String id);
+    public abstract Optional<AbstractElenaNode> getNodeByID(@NonNull String id);
+
+    public abstract Optional<AbstractElenaNode> getNodeByAddress(@NonNull String address);
+
+    public abstract Optional<AbstractElenaNode> getNodeByCoordinate(@NonNull String latitude, @NonNull String longitutde);
 
     public abstract AbstractElenaEdge getEdge(@NonNull String id);
 

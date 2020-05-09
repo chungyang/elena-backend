@@ -44,7 +44,7 @@ public class RouterTest {
 	// Test Dijkstra algorithm
 	@Test
 	public void dijkstraTest() {
-		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+		List<AbstractElenaPath> shortestPaths = dijkstra_router.getRoute(graph.getNodeByID("n0").get(), graph.getNodeByID("n3").get(), graph);
 		Float expected = (float) 3;
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
@@ -53,7 +53,7 @@ public class RouterTest {
 	// Test Yen's with Dijkstra algorithm
 	@Test
 	public void yenTest() {
-		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+		List<AbstractElenaPath> shortestPaths = yen_router.getRoute(graph.getNodeByID("n0").get(), graph.getNodeByID("n3").get(), graph);
 		Float expected = (float) 5;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
@@ -62,7 +62,7 @@ public class RouterTest {
 	// Test Astar algorithm
 	@Test
 	public void astarTest() {
-		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+		List<AbstractElenaPath> shortestPaths = astar_router.getRoute(graph.getNodeByID("n0").get(), graph.getNodeByID("n3").get(), graph);
 		Float expected = 3f;
 		Float actual = shortestPaths.get(0).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);
@@ -71,7 +71,7 @@ public class RouterTest {
 	// Test Yen's with Astar algorithm
 	@Test
 	public void yen_astar_router() {
-		List<AbstractElenaPath> shortestPaths = yen_astar_router.getRoute(graph.getNode("n0").get(), graph.getNode("n3").get(), graph);
+		List<AbstractElenaPath> shortestPaths = yen_astar_router.getRoute(graph.getNodeByID("n0").get(), graph.getNodeByID("n3").get(), graph);
 		Float expected = 5f;
 		Float actual = shortestPaths.get(2).getPathWeights().get(WeightType.DISTANCE);
 		assertEquals(expected, actual);

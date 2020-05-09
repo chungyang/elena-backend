@@ -37,26 +37,24 @@ public class RouteController {
         ElevationMode eleMode = ElevationMode.valueOf(elevationMode.toUpperCase());
         AbstractRouter router = RouterFactory.getRouter(algorithm, percentage);
 
-        if(!graph.getNode(from).isPresent() || !graph.getNode(to).isPresent()){
+        if(!graph.getNodeByAddress(from).isPresent() || !graph.getNodeByAddress(to).isPresent()){
             new ResponseEntity<String>("Can't find " + from + " or " + to, HttpStatus.BAD_REQUEST);
         }
         long s = System.currentTimeMillis();
-        List<AbstractElenaPath> paths = router.getRoute(graph.getNode(from).get(), graph.getNode(to).get(), graph);
+        List<AbstractElenaPath> paths = router.getRoute(graph.getNodeByAddress(from).get(), graph.getNodeByAddress(to).get(), graph);
         AbstractElenaPath selectedPath = ElenaUtils.selectPath(eleMode, paths, percentage);
         System.out.println((float) (System.currentTimeMillis() - s) / 1000);
         String response = this.aggregatePathInfo(paths.get(0), selectedPath);
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
 
-        return responseEntity;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(method= RequestMethod.GET, value="autocomplete")
     public ResponseEntity<Collection<String>> getAutocompleteList(@RequestParam("name") String name) {
 
         Collection<String> suggestions = autoCompleter.getNameSuggestions(name);
-        ResponseEntity<Collection<String>> responseEntity = new ResponseEntity<>(suggestions, HttpStatus.OK);
 
-        return responseEntity;
+        return new ResponseEntity<>(suggestions, HttpStatus.OK);
     }
 
     @PreDestroy

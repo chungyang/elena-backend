@@ -27,6 +27,10 @@ public class Coordinate {
     @Override
     public boolean equals(Object obj) {
 
+        if(!(obj instanceof Coordinate)){
+            return false;
+        }
+
         if(obj == this){
             return true;
         }

@@ -26,7 +26,7 @@ public class ElenaGraph extends AbstractElenaGraph{
     //in the future.
     private Map<String, AbstractElenaNode> nodesById;
     private Map<String, AbstractElenaNode> nodesByName;
-    private Map<String, AbstractElenaNode> nodesByCoordinate;
+    private Map<Coordinate, AbstractElenaNode> nodesByCoordinate;
     private Map<String, AbstractElenaEdge> edges;
     private final ElevationDao elevationDao;
     private ExecutorService executorService = Executors.newFixedThreadPool(20);
@@ -94,7 +94,9 @@ public class ElenaGraph extends AbstractElenaGraph{
 
 
             this.nodesById.put(elenaNode.getId(), elenaNode);
-            this.nodesByCoordinate.put(this.getCoordinate(elenaNode), elenaNode);
+            this.nodesByCoordinate.put(
+                    new Coordinate(Float.parseFloat(elenaNode.getLatitude()), Float.parseFloat(elenaNode.getLongitude())),
+                    elenaNode);
         }
 
         //Leftover processing
@@ -136,12 +138,6 @@ public class ElenaGraph extends AbstractElenaGraph{
         return names.split(", ");
     }
 
-    private String getCoordinate(AbstractElenaNode node){
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(node.getLatitude()).append(",").append(node.getLongitude());
-        return stringBuilder.toString();
-    }
 
     @Override
     public Collection<AbstractElenaNode> getAllNodes() {
@@ -159,23 +155,19 @@ public class ElenaGraph extends AbstractElenaGraph{
     }
 
     @Override
-    public Optional<AbstractElenaNode> getNode(String id) {
+    public Optional<AbstractElenaNode> getNodeByID(String id) {
+        return Optional.ofNullable(this.nodesById.getOrDefault(id, null));
+    }
 
-        id = id.toLowerCase();
-        AbstractElenaNode node;
+    @Override
+    public Optional<AbstractElenaNode> getNodeByAddress(String address) {
+        return Optional.ofNullable(this.nodesByName.getOrDefault(address.toLowerCase(), null));
+    }
 
-        if(this.nodesById.containsKey(id)){
-            node =  this.nodesById.get(id);
-        }
-        else if(this.nodesByCoordinate.containsKey(id)){
-            node = this.nodesByCoordinate.get(id);
-        }
-        else{
-            node = this.nodesByName.getOrDefault(id, null);
-        }
-
-        Optional<AbstractElenaNode> optional = Optional.ofNullable(node);
-        return optional;
+    @Override
+    public Optional<AbstractElenaNode> getNodeByCoordinate(String latitude, String longitutde) {
+        Coordinate coordinate = new Coordinate(Float.parseFloat(latitude), Float.parseFloat(longitutde));
+        return Optional.ofNullable(this.nodesByCoordinate.getOrDefault(coordinate, null));
     }
 
     @Override
@@ -245,13 +237,13 @@ public class ElenaGraph extends AbstractElenaGraph{
         @Override
         public AbstractElenaNode getOriginNode() {
             String originNodeId = (String) tinkerEdge.outVertex().id();
-            return this.graph.getNode(originNodeId).get();
+            return this.graph.getNodeByID(originNodeId).get();
         }
 
         @Override
         public AbstractElenaNode getDestinationNode() {
             String destinationNodeId = (String) tinkerEdge.inVertex().id();
-            return this.graph.getNode(destinationNodeId).get();
+            return this.graph.getNodeByID(destinationNodeId).get();
         }
 
         @Override
@@ -321,7 +313,7 @@ public class ElenaGraph extends AbstractElenaGraph{
 
             if(outgoingEdges.isEmpty()) {
                 tinkerVertex.edges(Direction.OUT).forEachRemaining(edge -> {
-                    outgoingEdges.put(this.graph.getNode((String) edge.inVertex().id()).get(),
+                    outgoingEdges.put(this.graph.getNodeByID((String) edge.inVertex().id()).get(),
                             this.graph.getEdge((String) edge.id()));
                 });
             }
@@ -356,6 +348,10 @@ public class ElenaGraph extends AbstractElenaGraph{
 
         @Override
         public boolean equals(Object o) {
+
+            if(!(o instanceof AbstractElenaNode)){
+                return false;
+            }
 
             if(o == this){
                 return true;
