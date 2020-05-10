@@ -50,17 +50,17 @@ public class HttpDao implements ElevationDao{
 
 
     @Override
-    public int insert(Collection<AbstractElenaNode> nodes) {
+    public int insert(Collection<? extends AbstractElenaNode> nodes) {
         return 0;
     }
 
     @Override
-    public int delete(Set<AbstractElenaNode> nodes) {
+    public int delete(Set<? extends AbstractElenaNode> nodes) {
         return 0;
     }
 
     @Override
-    public int get(Collection<AbstractElenaNode> nodes, Units unit) {
+    public int get(Collection<? extends AbstractElenaNode> nodes, Units unit) {
 
         List<Callable<Boolean>> tasks = new ArrayList<>();
         AtomicInteger retrievedNumber = new AtomicInteger(0);
@@ -85,7 +85,7 @@ public class HttpDao implements ElevationDao{
     }
 
     @Override
-    public int update(Collection<AbstractElenaNode> elevationData) {
+    public int update(Collection<? extends AbstractElenaNode> elevationData) {
         return 0;
     }
 

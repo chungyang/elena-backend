@@ -30,7 +30,7 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public int insert(Collection<AbstractElenaNode> nodes) {
+    public int insert(Collection<? extends AbstractElenaNode> nodes) {
 
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("INSERT INTO elevation (ID, ELEVATION) values ");
@@ -54,12 +54,12 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public int delete(Set<AbstractElenaNode> elevationData) {
+    public int delete(Set<? extends AbstractElenaNode> elevationData) {
         return 0;
     }
 
     @Override
-    public int get(Collection<AbstractElenaNode> nodes, Units unit) {
+    public int get(Collection<? extends AbstractElenaNode> nodes, Units unit) {
 
 
         Map<String, AbstractElenaNode> nodeMap = new HashMap<>();
@@ -99,7 +99,7 @@ public class SqliteElevationDao implements ElevationDao{
     }
 
     @Override
-    public int update(Collection<AbstractElenaNode> nodes) {
+    public int update(Collection<? extends AbstractElenaNode> nodes) {
         return 0;
     }
 

@@ -21,7 +21,7 @@ public class ElenaUtils {
         return res;
     }
 
-    public static AbstractElenaPath selectPath(ElevationMode mode, List<AbstractElenaPath> paths, int percentage){
+    public static AbstractElenaPath selectPath(ElevationMode mode, List<? extends AbstractElenaPath> paths, int percentage){
 
         float margin = paths.get(0).getPathWeights().get(WeightType.DISTANCE) * percentage / 100;
         AbstractElenaPath selectedPath = paths.get(0);

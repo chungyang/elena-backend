@@ -10,11 +10,11 @@ import java.util.Set;
 
 public interface ElevationDao extends Closeable {
 
-    int insert(Collection<AbstractElenaNode> nodes);
+    int insert(Collection<? extends AbstractElenaNode> nodes);
 
-    int delete(Set<AbstractElenaNode> nodes);
+    int delete(Set<? extends AbstractElenaNode> nodes);
 
-    int get(Collection<AbstractElenaNode> nodes, Units unit);
+    int get(Collection<? extends AbstractElenaNode> nodes, Units unit);
 
-    int update(Collection<AbstractElenaNode> nodes);
+    int update(Collection<? extends AbstractElenaNode> nodes);
 }
