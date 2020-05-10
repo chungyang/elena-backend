@@ -14,7 +14,7 @@ public abstract class AbstractRouter {
      */
     public abstract List<AbstractElenaPath> getRoute(AbstractElenaNode originNode, AbstractElenaNode destinationNode, AbstractElenaGraph graph);
 
-    protected class NodeWrapper {
+    protected static class NodeWrapper {
 
         AbstractElenaNode wrappedNode;
         Float distanceWeight;
